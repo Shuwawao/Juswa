@@ -5,8 +5,10 @@
  * playing uninterrupted across pages.
  */
 
+import './theme.js';
+import './audio.js';
 import { initMusicPlayer } from './player.js';
-import { initRoom } from './room.js';
+import { initRoom, cleanupRoom } from './room.js';
 import { initProjects } from './projects.js';
 
 let roleRotatorInterval = null;
@@ -252,11 +254,14 @@ export function navigateToPage(url, pushState = true) {
           // Re-initialize page specific controllers
           if (pageName === 'index.html' || pageName === '' || pageName === '/') {
             initRoom();
-          } else if (pageName === 'about.html') {
-            initAboutRoleRotator();
-            initAboutPolaroid();
-          } else if (pageName === 'projects.html') {
-            initProjects();
+          } else {
+            cleanupRoom();
+            if (pageName === 'about.html') {
+              initAboutRoleRotator();
+              initAboutPolaroid();
+            } else if (pageName === 'projects.html') {
+              initProjects();
+            }
           }
 
           // Re-bind interactive sounds and links
@@ -285,10 +290,14 @@ window.addEventListener('popstate', (e) => {
 });
 
 // Initial Bootstrap on Page Load
-document.addEventListener('DOMContentLoaded', () => {
+function bootstrapApp() {
   bindNavMenuControls();
   bindPageInteractions();
   initMusicPlayer();
+
+  if (window.JuswaTheme) {
+    window.JuswaTheme.syncRoomElements(window.JuswaTheme.currentTheme);
+  }
 
   const path = window.location.pathname;
   if (path.includes('about.html')) {
@@ -299,4 +308,10 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     initRoom();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrapApp);
+} else {
+  bootstrapApp();
+}

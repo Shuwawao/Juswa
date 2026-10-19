@@ -182,10 +182,16 @@ class SoundSystem {
 
   subscribe(callback) {
     if (typeof callback === 'function') {
-      this.subscribers.push(callback);
+      if (!this.subscribers.includes(callback)) {
+        this.subscribers.push(callback);
+      }
       // Immediately notify subscriber of current state
       callback(this.getState());
+      return () => {
+        this.subscribers = this.subscribers.filter(cb => cb !== callback);
+      };
     }
+    return () => {};
   }
 
   notify() {

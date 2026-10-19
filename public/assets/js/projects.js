@@ -7,6 +7,10 @@ export function initProjects() {
   const projectCards = document.querySelectorAll('.project-card');
   if (filterButtons.length === 0 || projectCards.length === 0) return;
 
+  const firstChip = filterButtons[0];
+  if (firstChip.dataset.projectsInitialized === 'true') return;
+  firstChip.dataset.projectsInitialized = 'true';
+
   filterButtons.forEach(btn => {
     btn.onclick = () => {
       const category = btn.getAttribute('data-filter');
@@ -41,11 +45,5 @@ export function initProjects() {
 }
 
 window.initJuswaProjects = initProjects;
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initProjects);
-} else {
-  initProjects();
-}
-
 export default initProjects;
+

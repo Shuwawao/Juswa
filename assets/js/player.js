@@ -16,6 +16,11 @@ export function initMusicPlayer() {
   const player = document.getElementById('sketch-music-player');
   if (!player) return;
 
+  if (player.dataset.playerInitialized === 'true') {
+    return;
+  }
+  player.dataset.playerInitialized = 'true';
+
   const toggleBtn = document.getElementById('player-toggle-btn');
   const toggleIcon = document.getElementById('player-toggle-icon');
   const playerBody = document.getElementById('player-body');
@@ -250,11 +255,5 @@ export function initMusicPlayer() {
   }
 }
 
-// Auto-run if loaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initMusicPlayer);
-} else {
-  initMusicPlayer();
-}
-
+window.initMusicPlayer = initMusicPlayer;
 export default initMusicPlayer;

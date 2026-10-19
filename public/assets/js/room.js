@@ -8,9 +8,29 @@
  * - Automatic pause of working animation on mouse hover
  */
 
+let workingInterval = null;
+let speakingInterval = null;
+
+export function cleanupRoom() {
+  if (workingInterval) {
+    clearInterval(workingInterval);
+    workingInterval = null;
+  }
+  if (speakingInterval) {
+    clearInterval(speakingInterval);
+    speakingInterval = null;
+  }
+}
+
 export function initRoom() {
   const roomStage = document.getElementById('room-stage');
   if (!roomStage) return;
+
+  if (roomStage.dataset.roomInitialized === 'true') {
+    return;
+  }
+  roomStage.dataset.roomInitialized = 'true';
+  cleanupRoom();
 
   // Working Animation Container & Frames
   const charWorkingContainer = document.getElementById('char-working-container');
@@ -39,7 +59,6 @@ export function initRoom() {
   // Fluid sketching stroke: 1 -> 2 -> 3 -> 4 -> 3 -> 2
   const workSequence = [0, 1, 2, 3, 2, 1];
   let workSeqIdx = 0;
-  let workingInterval = null;
   const WORK_INTERVAL_MS = 160;
 
   function stepWorkingAnimation() {
@@ -77,7 +96,6 @@ export function initRoom() {
   }
 
   // --- Speaking Animation (Character Bobs Down & Up Behind Stationary Laptop) ---
-  let speakingInterval = null;
   let isMouthOpen = false;
   const SPEAK_INTERVAL_MS = 140;
 
@@ -170,34 +188,36 @@ export function initRoom() {
   // 1. Main Character (Stops working on hover, character bobs down & up behind laptop, says "wassup")
   const hotspotChar = document.getElementById('hotspot-char');
   if (hotspotChar) {
-    hotspotChar.addEventListener('mouseenter', () => {
+    hotspotChar.onmouseenter = () => {
       showSpeech('wassup', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotChar.addEventListener('mouseleave', () => {
+    hotspotChar.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotChar.addEventListener('click', () => {
+    hotspotChar.onclick = (e) => {
+      if (e) e.preventDefault();
       showSpeech('wassup! welcome to my sketchbook room :)', true);
       if (window.JuswaSound) window.JuswaSound.playClick();
-    });
+    };
   }
 
   // 2. Personal Photograph (About Me)
   const hotspotPhoto = document.getElementById('hotspot-photo');
   if (hotspotPhoto) {
-    hotspotPhoto.addEventListener('mouseenter', () => {
+    hotspotPhoto.onmouseenter = () => {
       showSpeech('learn more about me?', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotPhoto.addEventListener('mouseleave', () => {
+    hotspotPhoto.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotPhoto.addEventListener('click', () => {
+    hotspotPhoto.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaSound) window.JuswaSound.playClick();
       setTimeout(() => {
         if (window.navigateToPage) {
@@ -206,40 +226,42 @@ export function initRoom() {
           window.location.href = 'about.html';
         }
       }, 120);
-    });
+    };
   }
 
   // 3. Illustrated Portrait (Art Portfolio)
   const hotspotArt = document.getElementById('hotspot-art');
   if (hotspotArt) {
-    hotspotArt.addEventListener('mouseenter', () => {
+    hotspotArt.onmouseenter = () => {
       showSpeech('check out my artworks', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotArt.addEventListener('mouseleave', () => {
+    hotspotArt.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotArt.addEventListener('click', () => {
+    hotspotArt.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaSound) window.JuswaSound.playClick();
       window.open('https://juswa-draws.vercel.app/', '_blank', 'noopener,noreferrer');
-    });
+    };
   }
 
   // 4. Portal Gun Prototype (Projects)
   const hotspotPrototype = document.getElementById('hotspot-prototype');
   if (hotspotPrototype) {
-    hotspotPrototype.addEventListener('mouseenter', () => {
+    hotspotPrototype.onmouseenter = () => {
       showSpeech('check out my projects', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotPrototype.addEventListener('mouseleave', () => {
+    hotspotPrototype.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotPrototype.addEventListener('click', () => {
+    hotspotPrototype.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaSound) window.JuswaSound.playClick();
       setTimeout(() => {
         if (window.navigateToPage) {
@@ -248,7 +270,7 @@ export function initRoom() {
           window.location.href = 'projects.html';
         }
       }, 120);
-    });
+    };
   }
 
   // 5. Music Box (Play/Pause background music)
@@ -262,121 +284,127 @@ export function initRoom() {
       return 'Play the music?';
     };
 
-    hotspotMusic.addEventListener('mouseenter', () => {
+    hotspotMusic.onmouseenter = () => {
       showSpeech(getMusicPrompt(), true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotMusic.addEventListener('mouseleave', () => {
+    hotspotMusic.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotMusic.addEventListener('click', () => {
+    hotspotMusic.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaSound) {
         const isPlaying = window.JuswaSound.toggleMusic();
         roomStage.classList.toggle('music-playing', isPlaying);
         showSpeech(getMusicPrompt(), true);
       }
-    });
+    };
   }
 
   // 6. Email Envelope (Send an Email)
   const hotspotMail = document.getElementById('hotspot-mail');
   if (hotspotMail) {
-    hotspotMail.addEventListener('mouseenter', () => {
+    hotspotMail.onmouseenter = () => {
       showSpeech('Send an Email?', true);
       if (layerMailNormal && layerMailHover) {
         layerMailNormal.style.display = 'none';
         layerMailHover.style.display = 'block';
       }
       if (window.JuswaSound) window.JuswaSound.playPaperRustle();
-    });
+    };
 
-    hotspotMail.addEventListener('mouseleave', () => {
+    hotspotMail.onmouseleave = () => {
       hideSpeech();
       if (layerMailNormal && layerMailHover) {
         layerMailNormal.style.display = 'block';
         layerMailHover.style.display = 'none';
       }
-    });
+    };
 
-    hotspotMail.addEventListener('click', () => {
+    hotspotMail.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaSound) window.JuswaSound.playClick();
       window.location.href = 'mailto:joshualagare24@gmail.com';
-    });
+    };
   }
 
   // 7. Theme Switch (Toggle light/dark)
   const hotspotSwitch = document.getElementById('hotspot-switch');
   if (hotspotSwitch) {
-    hotspotSwitch.addEventListener('mouseenter', () => {
+    hotspotSwitch.onmouseenter = () => {
       showSpeech('change theme?', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotSwitch.addEventListener('mouseleave', () => {
+    hotspotSwitch.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotSwitch.addEventListener('click', () => {
+    hotspotSwitch.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaTheme) {
         window.JuswaTheme.toggleTheme();
       }
-    });
+    };
   }
 
   // 8. GitHub Icon
   const hotspotGithub = document.getElementById('hotspot-github');
   if (hotspotGithub) {
-    hotspotGithub.addEventListener('mouseenter', () => {
+    hotspotGithub.onmouseenter = () => {
       showSpeech('Check out my github', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotGithub.addEventListener('mouseleave', () => {
+    hotspotGithub.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotGithub.addEventListener('click', () => {
+    hotspotGithub.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaSound) window.JuswaSound.playClick();
       window.open('https://github.com/Shuwawao', '_blank', 'noopener,noreferrer');
-    });
+    };
   }
 
   // 9. Instagram Icon
   const hotspotInstagram = document.getElementById('hotspot-instagram');
   if (hotspotInstagram) {
-    hotspotInstagram.addEventListener('mouseenter', () => {
+    hotspotInstagram.onmouseenter = () => {
       showSpeech('Follow me on Instagram', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotInstagram.addEventListener('mouseleave', () => {
+    hotspotInstagram.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotInstagram.addEventListener('click', () => {
+    hotspotInstagram.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaSound) window.JuswaSound.playClick();
       window.open('https://www.instagram.com/juswa_draws', '_blank', 'noopener,noreferrer');
-    });
+    };
   }
 
   // 10. Facebook Icon
   const hotspotFacebook = document.getElementById('hotspot-facebook');
   if (hotspotFacebook) {
-    hotspotFacebook.addEventListener('mouseenter', () => {
+    hotspotFacebook.onmouseenter = () => {
       showSpeech('Lets be friends', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
-    });
+    };
 
-    hotspotFacebook.addEventListener('mouseleave', () => {
+    hotspotFacebook.onmouseleave = () => {
       hideSpeech();
-    });
+    };
 
-    hotspotFacebook.addEventListener('click', () => {
+    hotspotFacebook.onclick = (e) => {
+      if (e) e.preventDefault();
       if (window.JuswaSound) window.JuswaSound.playClick();
       window.open('https://www.facebook.com/joshua.lagare.31', '_blank', 'noopener,noreferrer');
-    });
+    };
   }
 
   // Music Box Alternating Animation (music-1 idle, alternates with music-2 when playing)
@@ -405,11 +433,5 @@ export function initRoom() {
 }
 
 window.initJuswaRoom = initRoom;
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initRoom);
-} else {
-  initRoom();
-}
-
+window.cleanupJuswaRoom = cleanupRoom;
 export default initRoom;
