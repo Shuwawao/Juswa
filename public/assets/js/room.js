@@ -318,11 +318,18 @@ export function initRoom() {
       hideSpeech();
     });
 
-    hotspotSwitch.addEventListener('click', () => {
+    const onSwitchClick = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       if (window.JuswaTheme) {
         window.JuswaTheme.toggleTheme();
       }
-    });
+    };
+
+    hotspotSwitch.onclick = onSwitchClick;
+    hotspotSwitch.addEventListener('touchend', onSwitchClick);
   }
 
   // 8. GitHub Icon
