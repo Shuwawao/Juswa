@@ -5,8 +5,6 @@
  * playing uninterrupted across pages.
  */
 
-import './theme.js';
-import './audio.js';
 import { initMusicPlayer } from './player.js';
 import { initRoom } from './room.js';
 import { initProjects } from './projects.js';
@@ -286,14 +284,11 @@ window.addEventListener('popstate', (e) => {
   navigateToPage(path, false);
 });
 
-function bootstrapApp() {
+// Initial Bootstrap on Page Load
+document.addEventListener('DOMContentLoaded', () => {
   bindNavMenuControls();
   bindPageInteractions();
   initMusicPlayer();
-
-  if (window.JuswaTheme) {
-    window.JuswaTheme.applyTheme(window.JuswaTheme.currentTheme, false);
-  }
 
   const path = window.location.pathname;
   if (path.includes('about.html')) {
@@ -304,10 +299,4 @@ function bootstrapApp() {
   } else {
     initRoom();
   }
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', bootstrapApp);
-} else {
-  bootstrapApp();
-}
+});
