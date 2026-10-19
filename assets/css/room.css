@@ -1,0 +1,534 @@
+/* ==========================================================================
+   JUSWA — INTERACTIVE ROOM STYLESHEET
+   3000x2000 Responsive Coordinate System, Hotspots, Character Reactions, Speech Bubbles
+   ========================================================================== */
+
+.room-section {
+  width: 100%;
+  padding: 1.5rem 1rem 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.room-wrapper {
+  width: 86%;
+  max-width: 980px;
+  margin: 0 auto;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .room-wrapper {
+    width: 92%;
+    max-width: 100%;
+  }
+}
+
+/* Room Canvas Frame */
+.room-stage {
+  width: 100%;
+  aspect-ratio: 3000 / 2000;
+  position: relative;
+  background-color: var(--bg-primary);
+  border: 4px solid var(--border-primary);
+  border-radius: var(--sketch-border);
+  box-shadow: 8px 8px 0px var(--border-primary);
+  overflow: hidden;
+  user-select: none;
+  touch-action: manipulation;
+  transition: background-color var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+/* Layer Base */
+.room-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+/* Specific Layer Stacking */
+.layer-sky {
+  z-index: 1;
+  filter: grayscale(100%) contrast(120%);
+}
+
+.layer-celestial {
+  z-index: 2;
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.layer-sun {
+  filter: grayscale(100%) contrast(140%);
+}
+
+.layer-moon {
+  filter: contrast(120%);
+}
+
+.layer-window {
+  z-index: 3;
+}
+
+.layer-light {
+  z-index: 4;
+}
+
+.layer-shelf {
+  z-index: 5;
+}
+
+.layer-social {
+  z-index: 6;
+  transition: transform var(--transition-fast);
+}
+
+.layer-frame {
+  z-index: 7;
+  transition: transform var(--transition-fast);
+}
+
+.layer-mail {
+  z-index: 8;
+  transition: opacity var(--transition-fast);
+}
+
+.layer-switch {
+  z-index: 8;
+}
+
+.layer-props {
+  z-index: 9;
+}
+
+.layer-character {
+  z-index: 10;
+  transition: opacity 0.1s ease;
+}
+
+.layer-character-head {
+  z-index: 10;
+}
+
+.layer-character-laptop {
+  z-index: 11;
+}
+
+/* Atmosphere Overlays */
+.layer-dark-overlay {
+  z-index: 15;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  transition: opacity var(--transition-normal);
+}
+
+.layer-light-effects {
+  z-index: 16;
+  opacity: 0;
+  mix-blend-mode: screen;
+  transition: opacity var(--transition-normal);
+}
+
+/* Subtle Idle Working Sketch Boiling / Drawing Jitter */
+@keyframes sketch-breathing {
+  0%, 100% {
+    transform: scale(1) translate(0, 0);
+  }
+  25% {
+    transform: scale(1.002, 0.998) translate(-0.5px, 0.5px);
+  }
+  50% {
+    transform: scale(0.998, 1.002) translate(0.5px, -0.5px);
+  }
+  75% {
+    transform: scale(1.001, 1) translate(-0.3px, -0.3px);
+  }
+}
+
+.char-working-anim {
+  animation: sketch-breathing 3s ease-in-out infinite;
+}
+
+/* Animated Speaking: Character bobs down and up behind the stationary laptop */
+.char-speaking-bob-down {
+  animation: char-speak-down-up 0.28s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
+}
+
+@keyframes char-speak-down-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(7px);
+  }
+}
+
+/* Hotspots Overlay Container */
+.hotspots-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+}
+
+/* Interactive Hotspot Elements */
+.room-hotspot {
+  position: absolute;
+  cursor: pointer;
+  background: transparent;
+  border: 2px dashed transparent;
+  border-radius: var(--sketch-border-sm);
+  display: block;
+  padding: 0;
+  margin: 0;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+  outline: none;
+}
+
+.room-hotspot:hover,
+.room-hotspot:focus-visible {
+  border-color: var(--border-primary);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .room-hotspot:hover,
+[data-theme="dark"] .room-hotspot:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Specific Hotspot Coordinate Bounding Boxes */
+.hotspot-character {
+  left: 28%;
+  top: 44%;
+  width: 36%;
+  height: 35%;
+  border-radius: 40px;
+}
+
+.hotspot-photo {
+  left: 59.07%;
+  top: 12.4%;
+  width: 11.47%;
+  height: 23.4%;
+}
+
+.hotspot-art {
+  left: 74.13%;
+  top: 5.6%;
+  width: 14.93%;
+  height: 34.2%;
+}
+
+.hotspot-prototype {
+  left: 55.47%;
+  top: 70%;
+  width: 11.73%;
+  height: 8.8%;
+}
+
+.hotspot-music {
+  left: 73.47%;
+  top: 62.6%;
+  width: 16.67%;
+  height: 16.4%;
+}
+
+.hotspot-mail {
+  left: 7.73%;
+  top: 68.2%;
+  width: 12.67%;
+  height: 11%;
+}
+
+.hotspot-switch {
+  left: 15.87%;
+  top: 56.6%;
+  width: 5.47%;
+  height: 8.8%;
+}
+
+.hotspot-github {
+  left: 68.27%;
+  top: 43.8%;
+  width: 4.27%;
+  height: 6%;
+}
+
+.hotspot-instagram {
+  left: 73.73%;
+  top: 44%;
+  width: 4.4%;
+  height: 5.8%;
+}
+
+.hotspot-facebook {
+  left: 79.07%;
+  top: 44%;
+  width: 4.27%;
+  height: 5.8%;
+}
+
+/* Coffee Cup Details */
+.layer-coffee {
+  z-index: 9;
+}
+
+/* Music Box Record Player Animation (Idle = music-1, Playing = alternates music-1 and music-2) */
+.layer-music-1 {
+  z-index: 9;
+  display: block;
+}
+
+.layer-music-2 {
+  z-index: 9;
+  display: none;
+}
+
+.room-stage.music-playing .layer-music-1 {
+  display: block;
+  animation: roomMusicAlternating1 0.36s infinite step-end;
+}
+
+.room-stage.music-playing .layer-music-2 {
+  display: block;
+  animation: roomMusicAlternating2 0.36s infinite step-end;
+}
+
+@keyframes roomMusicAlternating1 {
+  0%, 50% {
+    opacity: 1;
+    visibility: visible;
+  }
+  50.01%, 100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes roomMusicAlternating2 {
+  0%, 50% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  50.01%, 100% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Animated Music Notes when Playing */
+.music-notes-container {
+  position: absolute;
+  left: 81%;
+  top: 60%;
+  pointer-events: none;
+  z-index: 25;
+  display: none;
+}
+
+.music-playing .music-notes-container {
+  display: block;
+}
+
+.music-note {
+  position: absolute;
+  font-family: var(--font-sketch);
+  font-size: 2rem;
+  color: var(--text-primary);
+  font-weight: 900;
+  animation: float-note 2s ease-in-out infinite;
+}
+
+.music-note:nth-child(2) {
+  left: 20px;
+  animation-delay: 0.6s;
+  font-size: 1.5rem;
+}
+
+.music-note:nth-child(3) {
+  left: -15px;
+  animation-delay: 1.2s;
+  font-size: 1.8rem;
+}
+
+@keyframes float-note {
+  0% {
+    transform: translateY(0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-80px) scale(1.1) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+/* Animated Coffee Steam */
+.coffee-steam-container {
+  position: absolute;
+  left: 33.5%;
+  top: 68%;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.steam-puff {
+  position: absolute;
+  width: 14px;
+  height: 28px;
+  border-left: 2px solid var(--text-primary);
+  border-radius: 50%;
+  opacity: 0;
+  animation: steam-rise 2.5s ease-out infinite;
+}
+
+.steam-puff:nth-child(2) {
+  left: 8px;
+  animation-delay: 1s;
+}
+
+@keyframes steam-rise {
+  0% {
+    transform: translateY(0) scaleY(0.6) scaleX(0.8);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-35px) scaleY(1.3) scaleX(1.4);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   Sketchbook Hand-Drawn Speech Bubble (Centered Tail & Fade-Upwards Animation)
+   ========================================================================== */
+
+.room-speech-bubble {
+  position: absolute;
+  left: 48.3%;
+  top: 42%;
+  transform: translate(-50%, -75%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 30;
+  transition: opacity 0.22s ease-out,
+              transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.22s;
+}
+
+.room-speech-bubble.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -100%);
+}
+
+.bubble-inner {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 3.5px solid var(--border-primary);
+  border-radius: 18px;
+  padding: 0.55rem 1.3rem;
+  font-family: var(--font-sans);
+  font-size: 1.55rem;
+  font-weight: 800;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  position: relative;
+  line-height: 1.25;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Center Bottom Triangular Tail pointing directly at character */
+.bubble-inner::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 11px solid var(--border-primary);
+}
+
+/* Room Control Help / Legend */
+.room-instructions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.instruction-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px dashed var(--border-primary);
+  border-radius: var(--sketch-border-sm);
+  background: var(--card-bg);
+}
+
+/* Mobile Quick Navigation Bar for touchscreens */
+.mobile-room-nav {
+  display: none;
+  width: 100%;
+  margin-top: 1.5rem;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .room-speech-bubble .bubble-inner {
+    font-size: 1.25rem;
+    padding: 0.45rem 0.95rem;
+    border-width: 3px;
+  }
+}
+
+@media (max-width: 600px) {
+  .mobile-room-nav {
+    display: flex;
+  }
+  .room-speech-bubble {
+    top: 41%;
+    left: 48.3%;
+  }
+  .room-speech-bubble .bubble-inner {
+    font-size: 1.05rem;
+    padding: 0.35rem 0.75rem;
+    border-width: 2.5px;
+    border-radius: 14px;
+  }
+  .bubble-inner::after {
+    bottom: -8px;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid var(--border-primary);
+  }
+  .room-stage {
+    border-width: 3px;
+    box-shadow: 4px 4px 0px var(--border-primary);
+  }
+}
