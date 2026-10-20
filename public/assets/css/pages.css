@@ -619,6 +619,9 @@
 
 .home-bio-clean {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   padding: 0.5rem 0 0.5rem 0;
 }
 

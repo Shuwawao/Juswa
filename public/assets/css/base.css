@@ -170,14 +170,17 @@ img {
 
 /* Location Indicator Badge */
 .location-badge {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  width: fit-content;
   gap: 0.45rem;
   font-family: var(--font-mono);
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-secondary);
-  margin-bottom: 0.7rem;
+  margin-top: 0.55rem;
+  margin-bottom: 0.85rem;
+  clear: both;
 }
 
 .location-badge svg {
@@ -188,7 +191,8 @@ img {
 @media (max-width: 480px) {
   .location-badge {
     font-size: 0.78rem;
-    margin-bottom: 0.55rem;
+    margin-top: 0.45rem;
+    margin-bottom: 0.65rem;
   }
 }
 
