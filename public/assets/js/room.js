@@ -403,7 +403,7 @@ export function initRoom() {
     hotspotFacebook.onclick = (e) => {
       if (e) e.preventDefault();
       if (window.JuswaSound) window.JuswaSound.playClick();
-      window.open('https://www.facebook.com/joshua.lagare.31', '_blank', 'noopener,noreferrer');
+      window.open('https://www.facebook.com/joshua.aquino25/', '_blank', 'noopener,noreferrer');
     };
   }
 

@@ -29,7 +29,7 @@ The homepage presents a cohesive 2D illustrated workspace built on a responsive 
 | **Light Switch** | Character looks up/speaks | `"change theme?"` | Toggles Day/Night mode & switch graphic |
 | **GitHub Icon** | Character looks up/speaks | `"Check out my github"` | Opens [`github.com/Shuwawao`](https://github.com/Shuwawao) |
 | **Instagram Icon** | Character looks up/speaks | `"Follow me on Instagram"` | Opens [`instagram.com/juswa_draws`](https://instagram.com/juswa_draws) |
-| **Facebook Icon** | Character looks up/speaks | `"Lets be friends"` | Opens Facebook profile |
+| **Facebook Icon** | Character looks up/speaks | `"Lets be friends"` | Opens Facebook profile ([`facebook.com/joshua.aquino25`](https://www.facebook.com/joshua.aquino25/)) |
 
 ---
 
@@ -75,4 +75,3 @@ npm.cmd run preview
 ```
 
 Static deployment is supported on **Vercel**, **Cloudflare Pages**, **GitHub Pages**, and **Netlify**.
->>>>>>> 343f0fc (feat: complete interactive sketchbook portfolio with music player, IRL photo reveal, and GitHub Pages workflow)
