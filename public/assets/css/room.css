@@ -21,7 +21,7 @@
 
 @media (max-width: 768px) {
   .room-section {
-    padding: 0.8rem 0.6rem 2rem 0.6rem;
+    padding: 0.8rem 1rem 2rem 1rem;
   }
   .room-wrapper {
     width: 100%;
@@ -31,7 +31,13 @@
 
 @media (max-width: 480px) {
   .room-section {
-    padding: 0.5rem 0.35rem 1.5rem 0.35rem;
+    padding: 0.6rem 0.85rem 1.6rem 0.85rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .room-section {
+    padding: 0.5rem 0.75rem 1.4rem 0.75rem;
   }
 }
 
@@ -731,8 +737,11 @@
   color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 0.5rem;
   opacity: 0.85;
+  line-height: 1.35;
   transition: opacity var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
 
@@ -762,8 +771,19 @@
     margin-bottom: 0.1rem;
   }
   .room-hint-text {
-    font-size: 1rem;
+    font-size: 0.95rem;
     gap: 0.4rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .room-hint-text {
+    font-size: 0.85rem;
+    gap: 0.35rem;
+  }
+  .room-hint-icon {
+    width: 13px;
+    height: 13px;
   }
 }
 
