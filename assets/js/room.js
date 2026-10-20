@@ -10,6 +10,97 @@
 
 let workingInterval = null;
 let speakingInterval = null;
+let speechTimeout = null;
+let hoverLingerTimer = null;
+
+// --- Character Dialogue State System ---
+// The original dialogues are shown first, followed by random selections from the pools.
+function createDialogueState(original, additions) {
+  return {
+    original,
+    additions: [...additions],
+    all: [original, ...additions],
+    hasShownOriginal: false,
+    unseenAdditions: [...additions],
+    lastShown: null
+  };
+}
+
+const dialoguesCharClick = createDialogueState(
+  "wassup! welcome to my sketchbook room :)",
+  [
+    "you're welcome to look around",
+    "Suit yourself",
+    "Wubba Lubba Dub-Dub!"
+  ]
+);
+
+const dialoguesNightMode = createDialogueState(
+  "I prefer working at night",
+  [
+    "I never sleep",
+    "my body clock is broken"
+  ]
+);
+
+const dialoguesLightMode = createDialogueState(
+  "ugh i hate mornings",
+  [
+    "I usually sleep at this time",
+    "what day is it now?"
+  ]
+);
+
+const dialoguesPhoto = createDialogueState(
+  "learn more about me?",
+  [
+    "don't mind my face",
+    "click to know more about me",
+    "you actually wanna click that?"
+  ]
+);
+
+const dialoguesArt = createDialogueState(
+  "check out my artworks",
+  [
+    "you might like to click that",
+    "that's my wife",
+    "wanna see my drawings",
+    "wanna commission my art?"
+  ]
+);
+
+const dialoguesPrototype = createDialogueState(
+  "check out my projects",
+  [
+    "I also build stuffs",
+    "wanna see my protoypes?",
+    "yeah I can build things"
+  ]
+);
+
+function getNextDialogue(state) {
+  if (!state.hasShownOriginal) {
+    state.hasShownOriginal = true;
+    state.lastShown = state.original;
+    return state.original;
+  }
+
+  // If there are unseen new additions, pick from unseen first
+  if (state.unseenAdditions.length > 0) {
+    const idx = Math.floor(Math.random() * state.unseenAdditions.length);
+    const picked = state.unseenAdditions.splice(idx, 1)[0];
+    state.lastShown = picked;
+    return picked;
+  }
+
+  // Once all have been seen at least once, pick randomly from all, avoiding immediate repetition
+  const candidates = state.all.filter(d => d !== state.lastShown);
+  const options = candidates.length > 0 ? candidates : state.all;
+  const picked = options[Math.floor(Math.random() * options.length)];
+  state.lastShown = picked;
+  return picked;
+}
 
 export function cleanupRoom() {
   if (workingInterval) {
@@ -19,6 +110,14 @@ export function cleanupRoom() {
   if (speakingInterval) {
     clearInterval(speakingInterval);
     speakingInterval = null;
+  }
+  if (speechTimeout) {
+    clearTimeout(speechTimeout);
+    speechTimeout = null;
+  }
+  if (hoverLingerTimer) {
+    clearInterval(hoverLingerTimer);
+    hoverLingerTimer = null;
   }
 }
 
@@ -171,11 +270,12 @@ export function initRoom() {
   }
 
   // --- Speech Bubble Controller ---
-  let speechTimeout = null;
-
   function showSpeech(text, isSpeaking = true) {
     if (!speechBubble || !speechText) return;
-    if (speechTimeout) clearTimeout(speechTimeout);
+    if (speechTimeout) {
+      clearTimeout(speechTimeout);
+      speechTimeout = null;
+    }
 
     speechText.textContent = text;
     speechBubble.classList.add('active');
@@ -192,9 +292,39 @@ export function initRoom() {
   }
 
   function hideSpeech() {
+    if (speechTimeout) {
+      clearTimeout(speechTimeout);
+      speechTimeout = null;
+    }
+    clearHoverLinger();
     if (!speechBubble) return;
     speechBubble.classList.remove('active');
     setCharacterState('working');
+  }
+
+  function scheduleSpeechHide(delay = 3500) {
+    if (speechTimeout) {
+      clearTimeout(speechTimeout);
+    }
+    speechTimeout = setTimeout(() => {
+      hideSpeech();
+      speechTimeout = null;
+    }, delay);
+  }
+
+  function startHoverLinger(dialogueState) {
+    clearHoverLinger();
+    hoverLingerTimer = setInterval(() => {
+      const nextLine = getNextDialogue(dialogueState);
+      showSpeech(nextLine, true);
+    }, 3500);
+  }
+
+  function clearHoverLinger() {
+    if (hoverLingerTimer) {
+      clearInterval(hoverLingerTimer);
+      hoverLingerTimer = null;
+    }
   }
 
   // --- Hotspots Configuration ---
@@ -203,17 +333,24 @@ export function initRoom() {
   const hotspotChar = document.getElementById('hotspot-char');
   if (hotspotChar) {
     hotspotChar.onmouseenter = () => {
+      clearHoverLinger();
       showSpeech('wassup', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
     };
 
     hotspotChar.onmouseleave = () => {
-      hideSpeech();
+      clearHoverLinger();
+      if (!speechTimeout) {
+        hideSpeech();
+      }
     };
 
     hotspotChar.onclick = (e) => {
       if (e) e.preventDefault();
-      showSpeech('wassup! welcome to my sketchbook room :)', true);
+      clearHoverLinger();
+      const text = getNextDialogue(dialoguesCharClick);
+      showSpeech(text, true);
+      scheduleSpeechHide(3500);
       if (window.JuswaSound) window.JuswaSound.playClick();
     };
   }
@@ -222,18 +359,23 @@ export function initRoom() {
   const hotspotPhoto = document.getElementById('hotspot-photo');
   if (hotspotPhoto) {
     hotspotPhoto.onmouseenter = () => {
-      showSpeech('learn more about me?', true);
+      clearHoverLinger();
+      const text = getNextDialogue(dialoguesPhoto);
+      showSpeech(text, true);
+      startHoverLinger(dialoguesPhoto);
       if (window.JuswaSound) window.JuswaSound.playHover();
       if (frameAbout) frameAbout.classList.add('frame-dangling');
     };
 
     hotspotPhoto.onmouseleave = () => {
+      clearHoverLinger();
       hideSpeech();
       if (frameAbout) frameAbout.classList.remove('frame-dangling');
     };
 
     hotspotPhoto.onclick = (e) => {
       if (e) e.preventDefault();
+      clearHoverLinger();
       if (window.JuswaSound) window.JuswaSound.playClick();
       setTimeout(() => {
         if (window.navigateToPage) {
@@ -249,18 +391,23 @@ export function initRoom() {
   const hotspotArt = document.getElementById('hotspot-art');
   if (hotspotArt) {
     hotspotArt.onmouseenter = () => {
-      showSpeech('check out my artworks', true);
+      clearHoverLinger();
+      const text = getNextDialogue(dialoguesArt);
+      showSpeech(text, true);
+      startHoverLinger(dialoguesArt);
       if (window.JuswaSound) window.JuswaSound.playHover();
       if (frameArt) frameArt.classList.add('frame-dangling');
     };
 
     hotspotArt.onmouseleave = () => {
+      clearHoverLinger();
       hideSpeech();
       if (frameArt) frameArt.classList.remove('frame-dangling');
     };
 
     hotspotArt.onclick = (e) => {
       if (e) e.preventDefault();
+      clearHoverLinger();
       if (window.JuswaSound) window.JuswaSound.playClick();
       window.open('https://juswa-draws.vercel.app/', '_blank', 'noopener,noreferrer');
     };
@@ -270,18 +417,23 @@ export function initRoom() {
   const hotspotPrototype = document.getElementById('hotspot-prototype');
   if (hotspotPrototype) {
     hotspotPrototype.onmouseenter = () => {
-      showSpeech('check out my projects', true);
+      clearHoverLinger();
+      const text = getNextDialogue(dialoguesPrototype);
+      showSpeech(text, true);
+      startHoverLinger(dialoguesPrototype);
       if (window.JuswaSound) window.JuswaSound.playHover();
       triggerPropJump(propPrototype);
     };
 
     hotspotPrototype.onmouseleave = () => {
+      clearHoverLinger();
       hideSpeech();
       if (propPrototype) propPrototype.classList.remove('prop-jumping');
     };
 
     hotspotPrototype.onclick = (e) => {
       if (e) e.preventDefault();
+      clearHoverLinger();
       if (window.JuswaSound) window.JuswaSound.playClick();
       setTimeout(() => {
         if (window.navigateToPage) {
@@ -305,22 +457,30 @@ export function initRoom() {
     };
 
     hotspotMusic.onmouseenter = () => {
+      clearHoverLinger();
       showSpeech(getMusicPrompt(), true);
       if (window.JuswaSound) window.JuswaSound.playHover();
       triggerPropJump(musicBox);
     };
 
     hotspotMusic.onmouseleave = () => {
-      hideSpeech();
+      clearHoverLinger();
       if (musicBox) musicBox.classList.remove('prop-jumping');
+      if (!speechTimeout) {
+        hideSpeech();
+      }
     };
 
     hotspotMusic.onclick = (e) => {
       if (e) e.preventDefault();
+      clearHoverLinger();
       if (window.JuswaSound) {
         const isPlaying = window.JuswaSound.toggleMusic();
         roomStage.classList.toggle('music-playing', isPlaying);
-        showSpeech(getMusicPrompt(), true);
+        if (!isPlaying) {
+          showSpeech(getMusicPrompt(), true);
+          scheduleSpeechHide(2000);
+        }
       }
     };
   }
@@ -329,6 +489,7 @@ export function initRoom() {
   const hotspotMail = document.getElementById('hotspot-mail');
   if (hotspotMail) {
     hotspotMail.onmouseenter = () => {
+      clearHoverLinger();
       showSpeech('Send an Email?', true);
       if (layerMailNormal && layerMailHover) {
         layerMailNormal.style.display = 'none';
@@ -338,6 +499,7 @@ export function initRoom() {
     };
 
     hotspotMail.onmouseleave = () => {
+      clearHoverLinger();
       hideSpeech();
       if (layerMailNormal && layerMailHover) {
         layerMailNormal.style.display = 'block';
@@ -356,18 +518,28 @@ export function initRoom() {
   const hotspotSwitch = document.getElementById('hotspot-switch');
   if (hotspotSwitch) {
     hotspotSwitch.onmouseenter = () => {
+      clearHoverLinger();
       showSpeech('change theme?', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
     };
 
     hotspotSwitch.onmouseleave = () => {
-      hideSpeech();
+      clearHoverLinger();
+      if (!speechTimeout) {
+        hideSpeech();
+      }
     };
 
     hotspotSwitch.onclick = (e) => {
       if (e) e.preventDefault();
+      clearHoverLinger();
       if (window.JuswaTheme) {
-        window.JuswaTheme.toggleTheme();
+        const newTheme = window.JuswaTheme.toggleTheme();
+        const text = newTheme === 'dark'
+          ? getNextDialogue(dialoguesNightMode)
+          : getNextDialogue(dialoguesLightMode);
+        showSpeech(text, true);
+        scheduleSpeechHide(3500);
       }
     };
   }
@@ -376,12 +548,14 @@ export function initRoom() {
   const hotspotGithub = document.getElementById('hotspot-github');
   if (hotspotGithub) {
     hotspotGithub.onmouseenter = () => {
+      clearHoverLinger();
       showSpeech('Check out my github', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
       triggerPropJump(socialGithub);
     };
 
     hotspotGithub.onmouseleave = () => {
+      clearHoverLinger();
       hideSpeech();
       if (socialGithub) socialGithub.classList.remove('prop-jumping');
     };
@@ -397,12 +571,14 @@ export function initRoom() {
   const hotspotInstagram = document.getElementById('hotspot-instagram');
   if (hotspotInstagram) {
     hotspotInstagram.onmouseenter = () => {
+      clearHoverLinger();
       showSpeech('Follow me on Instagram', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
       triggerPropJump(socialInstagram);
     };
 
     hotspotInstagram.onmouseleave = () => {
+      clearHoverLinger();
       hideSpeech();
       if (socialInstagram) socialInstagram.classList.remove('prop-jumping');
     };
@@ -418,12 +594,14 @@ export function initRoom() {
   const hotspotFacebook = document.getElementById('hotspot-facebook');
   if (hotspotFacebook) {
     hotspotFacebook.onmouseenter = () => {
+      clearHoverLinger();
       showSpeech('Lets be friends', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
       triggerPropJump(socialFacebook);
     };
 
     hotspotFacebook.onmouseleave = () => {
+      clearHoverLinger();
       hideSpeech();
       if (socialFacebook) socialFacebook.classList.remove('prop-jumping');
     };
@@ -441,13 +619,26 @@ export function initRoom() {
   if (roomMusic1) roomMusic1.style.display = '';
   if (roomMusic2) roomMusic2.style.display = '';
 
-  // Sync Audio State Listener: toggles .music-playing on roomStage
+  // Sync Audio State Listener: toggles .music-playing on roomStage & character speech
   if (window.JuswaSound) {
+    let hasSubscribedInitially = false;
+    let prevIsPlayingMusic = false;
+
     window.JuswaSound.subscribe((state) => {
       const isPlaying = Boolean(state && state.isPlayingMusic);
       if (roomStage) {
         roomStage.classList.toggle('music-playing', isPlaying);
       }
+      if (!hasSubscribedInitially) {
+        hasSubscribedInitially = true;
+        prevIsPlayingMusic = isPlaying;
+        return;
+      }
+      if (isPlaying && !prevIsPlayingMusic) {
+        showSpeech("Ohh I like this one", true);
+        scheduleSpeechHide(3500);
+      }
+      prevIsPlayingMusic = isPlaying;
     });
   }
 
