@@ -168,6 +168,30 @@ img {
   border-radius: 4px;
 }
 
+/* Location Indicator Badge */
+.location-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 0.7rem;
+}
+
+.location-badge svg {
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
+
+@media (max-width: 480px) {
+  .location-badge {
+    font-size: 0.78rem;
+    margin-bottom: 0.55rem;
+  }
+}
+
 /* ==========================================================================
    Sketchbook Menu Button & Vertical Pill Navigation
    ========================================================================== */
