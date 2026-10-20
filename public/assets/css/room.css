@@ -116,6 +116,94 @@
   z-index: 9;
 }
 
+/* Picture Frames Hanging Dangle Animation */
+#room-frame-about {
+  transform-origin: 64.53% 12.35%;
+  transition: transform 0.35s ease;
+}
+
+#room-frame-art {
+  transform-origin: 81.73% 5.55%;
+  transition: transform 0.35s ease;
+}
+
+@keyframes frame-dangle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  75% {
+    transform: rotate(-1.6deg);
+  }
+}
+
+.frame-dangling {
+  animation: frame-dangle 1.4s ease-in-out infinite;
+}
+
+#room-stage:has(#hotspot-photo:hover) #room-frame-about,
+#room-stage:has(#hotspot-photo:focus-visible) #room-frame-about {
+  animation: frame-dangle 1.4s ease-in-out infinite;
+}
+
+#room-stage:has(#hotspot-art:hover) #room-frame-art,
+#room-stage:has(#hotspot-art:focus-visible) #room-frame-art {
+  animation: frame-dangle 1.4s ease-in-out infinite;
+}
+
+/* Desk Props and Shelf Boxes Small Jump Animation */
+@keyframes prop-jump {
+  0% {
+    transform: translateY(0);
+  }
+  28% {
+    transform: translateY(-9px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  72% {
+    transform: translateY(-2.5px);
+  }
+  88% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.prop-jumping {
+  animation: prop-jump 0.46s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#room-stage:has(#hotspot-github:hover) #room-social-github,
+#room-stage:has(#hotspot-github:focus-visible) #room-social-github {
+  animation: prop-jump 0.46s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#room-stage:has(#hotspot-instagram:hover) #room-social-instagram,
+#room-stage:has(#hotspot-instagram:focus-visible) #room-social-instagram {
+  animation: prop-jump 0.46s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#room-stage:has(#hotspot-facebook:hover) #room-social-facebook,
+#room-stage:has(#hotspot-facebook:focus-visible) #room-social-facebook {
+  animation: prop-jump 0.46s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#room-stage:has(#hotspot-prototype:hover) #room-prototype,
+#room-stage:has(#hotspot-prototype:focus-visible) #room-prototype {
+  animation: prop-jump 0.46s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+#room-stage:has(#hotspot-music:hover) #room-music-box,
+#room-stage:has(#hotspot-music:focus-visible) #room-music-box {
+  animation: prop-jump 0.46s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
 .layer-character {
   z-index: 10;
   transition: opacity 0.1s ease;

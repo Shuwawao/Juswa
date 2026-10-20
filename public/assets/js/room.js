@@ -50,6 +50,20 @@ export function initRoom() {
   // Prop Layers
   const layerMailNormal = document.getElementById('room-mail-normal');
   const layerMailHover = document.getElementById('room-mail-hover');
+  const frameAbout = document.getElementById('room-frame-about');
+  const frameArt = document.getElementById('room-frame-art');
+  const socialGithub = document.getElementById('room-social-github');
+  const socialInstagram = document.getElementById('room-social-instagram');
+  const socialFacebook = document.getElementById('room-social-facebook');
+  const propPrototype = document.getElementById('room-prototype');
+  const musicBox = document.getElementById('room-music-box');
+
+  function triggerPropJump(el) {
+    if (!el) return;
+    el.classList.remove('prop-jumping');
+    void el.offsetWidth;
+    el.classList.add('prop-jumping');
+  }
 
   // Speech Bubble Elements
   const speechBubble = document.getElementById('room-speech-bubble');
@@ -210,10 +224,12 @@ export function initRoom() {
     hotspotPhoto.onmouseenter = () => {
       showSpeech('learn more about me?', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
+      if (frameAbout) frameAbout.classList.add('frame-dangling');
     };
 
     hotspotPhoto.onmouseleave = () => {
       hideSpeech();
+      if (frameAbout) frameAbout.classList.remove('frame-dangling');
     };
 
     hotspotPhoto.onclick = (e) => {
@@ -235,10 +251,12 @@ export function initRoom() {
     hotspotArt.onmouseenter = () => {
       showSpeech('check out my artworks', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
+      if (frameArt) frameArt.classList.add('frame-dangling');
     };
 
     hotspotArt.onmouseleave = () => {
       hideSpeech();
+      if (frameArt) frameArt.classList.remove('frame-dangling');
     };
 
     hotspotArt.onclick = (e) => {
@@ -254,10 +272,12 @@ export function initRoom() {
     hotspotPrototype.onmouseenter = () => {
       showSpeech('check out my projects', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
+      triggerPropJump(propPrototype);
     };
 
     hotspotPrototype.onmouseleave = () => {
       hideSpeech();
+      if (propPrototype) propPrototype.classList.remove('prop-jumping');
     };
 
     hotspotPrototype.onclick = (e) => {
@@ -287,10 +307,12 @@ export function initRoom() {
     hotspotMusic.onmouseenter = () => {
       showSpeech(getMusicPrompt(), true);
       if (window.JuswaSound) window.JuswaSound.playHover();
+      triggerPropJump(musicBox);
     };
 
     hotspotMusic.onmouseleave = () => {
       hideSpeech();
+      if (musicBox) musicBox.classList.remove('prop-jumping');
     };
 
     hotspotMusic.onclick = (e) => {
@@ -356,10 +378,12 @@ export function initRoom() {
     hotspotGithub.onmouseenter = () => {
       showSpeech('Check out my github', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
+      triggerPropJump(socialGithub);
     };
 
     hotspotGithub.onmouseleave = () => {
       hideSpeech();
+      if (socialGithub) socialGithub.classList.remove('prop-jumping');
     };
 
     hotspotGithub.onclick = (e) => {
@@ -375,10 +399,12 @@ export function initRoom() {
     hotspotInstagram.onmouseenter = () => {
       showSpeech('Follow me on Instagram', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
+      triggerPropJump(socialInstagram);
     };
 
     hotspotInstagram.onmouseleave = () => {
       hideSpeech();
+      if (socialInstagram) socialInstagram.classList.remove('prop-jumping');
     };
 
     hotspotInstagram.onclick = (e) => {
@@ -394,10 +420,12 @@ export function initRoom() {
     hotspotFacebook.onmouseenter = () => {
       showSpeech('Lets be friends', true);
       if (window.JuswaSound) window.JuswaSound.playHover();
+      triggerPropJump(socialFacebook);
     };
 
     hotspotFacebook.onmouseleave = () => {
       hideSpeech();
+      if (socialFacebook) socialFacebook.classList.remove('prop-jumping');
     };
 
     hotspotFacebook.onclick = (e) => {
