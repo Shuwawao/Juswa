@@ -709,3 +709,61 @@
     box-shadow: 3px 3px 0px var(--border-primary);
   }
 }
+
+/* ==========================================================================
+   Room Interactive Exploration Hint
+   ========================================================================== */
+
+.room-hint-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.1rem;
+  margin-bottom: 0.2rem;
+  text-align: center;
+  user-select: none;
+}
+
+.room-hint-text {
+  font-family: var(--font-sketch);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.85;
+  transition: opacity var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.room-hint-text:hover {
+  opacity: 1;
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.room-hint-icon {
+  flex-shrink: 0;
+  animation: hintCursorBounce 2.4s ease-in-out infinite;
+}
+
+@keyframes hintCursorBounce {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(2px, -3px);
+  }
+}
+
+@media (max-width: 600px) {
+  .room-hint-bar {
+    margin-top: 0.85rem;
+    margin-bottom: 0.1rem;
+  }
+  .room-hint-text {
+    font-size: 1rem;
+    gap: 0.4rem;
+  }
+}
+

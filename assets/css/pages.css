@@ -1155,3 +1155,294 @@
     font-size: 1.6rem;
   }
 }
+
+/* ==========================================================================
+   COMMISSIONS & EXTENDED ART ARCHIVE SHOWCASE CARD
+   Uneven Hand-Drawn Sketchy Linart Aesthetic
+   ========================================================================== */
+
+.art-archive-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 3px solid var(--border-primary);
+  border-radius: var(--sketch-border);
+  box-shadow: 6px 6px 0px var(--border-primary);
+  padding: 2.2rem 2.5rem;
+  display: grid;
+  grid-template-columns: 160px 1fr 240px;
+  align-items: center;
+  gap: 2.4rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  margin-top: 0.5rem;
+}
+
+.art-archive-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--border-primary);
+}
+
+/* Left Column: Avatar & Badge */
+.art-archive-avatar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: center;
+  position: relative;
+}
+
+.art-archive-avatar-wrap {
+  width: 140px;
+  height: 155px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.art-archive-card:hover .art-archive-avatar-wrap {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+/* Sketchbook Monochrome Filter by Default, Blooms into Full Color on Hover */
+.art-archive-avatar-img {
+  max-width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  display: block;
+  filter: grayscale(100%) contrast(115%) brightness(96%);
+  transition: filter var(--transition-normal), transform var(--transition-normal);
+}
+
+.art-archive-card:hover .art-archive-avatar-img {
+  filter: grayscale(0%) contrast(100%) brightness(100%);
+}
+
+.art-archive-avatar-badge {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.8rem;
+  border: 1.5px solid var(--border-primary);
+  border-radius: var(--sketch-border-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  box-shadow: 2px 2px 0px var(--border-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.art-sparkle-icon {
+  font-size: 0.85rem;
+  display: inline-block;
+  animation: sparkleRotate 3s ease-in-out infinite;
+}
+
+@keyframes sparkleRotate {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.22) rotate(16deg); }
+}
+
+/* Middle Column: Headline, Bio & Capability Chips */
+.art-archive-content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  position: relative;
+}
+
+.art-archive-tag-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.art-archive-category {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* Consistent Sketch Font matching GitHub & Projects Titles */
+.art-archive-title {
+  font-family: var(--font-sketch);
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+.art-archive-desc {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.art-archive-domain-link {
+  color: var(--text-primary);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity var(--transition-fast);
+}
+
+.art-archive-domain-link:hover {
+  opacity: 0.75;
+}
+
+/* Feature Checklist Chips with Uneven Sketchy Borders */
+.art-archive-features {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 0.6rem 0.85rem;
+  margin-top: 0.35rem;
+}
+
+.art-feature-chip {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  border: 1.5px solid var(--border-primary);
+  border-radius: var(--sketch-border-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  box-shadow: 2px 2px 0px var(--border-primary);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+
+.art-feature-chip:hover {
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 3.5px 3.5px 0px var(--border-primary);
+}
+
+.art-feature-chip svg {
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+/* Right Column: High-Contrast Action Button with Uneven Sketchy Contour */
+.art-archive-action-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.art-archive-cta-btn {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.95rem 1.4rem;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--sketch-border-sm);
+  box-shadow: 4px 4px 0px var(--border-primary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.art-archive-cta-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0px var(--border-primary);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.art-archive-cta-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px var(--border-primary);
+}
+
+.art-archive-cta-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 0.6rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* Responsive Breakpoints for Art Archive Card */
+@media (max-width: 1080px) {
+  .art-archive-card {
+    grid-template-columns: 140px 1fr;
+    gap: 1.8rem;
+    padding: 2rem 1.8rem;
+  }
+  .art-archive-action-col {
+    grid-column: 1 / -1;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .art-archive-cta-btn {
+    width: auto;
+    min-width: 260px;
+  }
+  .art-archive-cta-hint {
+    text-align: left;
+  }
+}
+
+@media (max-width: 720px) {
+  .art-archive-card {
+    grid-template-columns: 1fr;
+    padding: 1.8rem 1.3rem;
+    gap: 1.5rem;
+    border-radius: var(--sketch-border-sm);
+  }
+  .art-archive-avatar-col {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .art-archive-avatar-wrap {
+    width: 90px;
+    height: 100px;
+  }
+  .art-archive-avatar-img {
+    max-height: 95px;
+  }
+  .art-archive-title {
+    font-size: 1.65rem;
+  }
+  .art-archive-features {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .art-feature-chip {
+    width: fit-content;
+  }
+  .art-archive-cta-btn {
+    width: 100%;
+  }
+  .art-archive-action-col {
+    align-items: stretch;
+  }
+  .art-archive-cta-hint {
+    text-align: center;
+  }
+}
