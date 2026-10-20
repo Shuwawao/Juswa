@@ -1,36 +1,34 @@
 /* ==========================================================================
-   JUSWA — ARTISTIC SCROLL ANIMATIONS & INTERACTION SYSTEM
-   Digital Sketchbook with Technical Engineering Annotations
-   Brand Accent: Lavender (#B69AFF) | Dark Base: #0C0C0F
+   JUSWA — ARTISTIC SCROLL & HOVER ANIMATION SYSTEM
+   Strict Monochrome Line Art & Sketchbook Aesthetics
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. Scroll Progress Bar (Top Edge Indicator)
+   1. Scroll Progress Bar (Top Edge Monochrome Indicator)
    -------------------------------------------------------------------------- */
 .scroll-progress-line {
   position: fixed;
   top: 0;
   left: 0;
-  height: 2.5px;
+  height: 2px;
   width: 0%;
-  background: var(--accent-lavender, #B69AFF);
-  box-shadow: 0 1px 6px rgba(182, 154, 255, 0.4);
+  background: var(--text-primary);
   z-index: 9999;
   pointer-events: none;
   transition: width 0.08s ease-out;
 }
 
 /* --------------------------------------------------------------------------
-   2. Desktop-Only Minimalist Sketch Cursor Accent
+   2. Desktop-Only Minimalist Sketch Cursor Accent (Strict Monochrome)
    -------------------------------------------------------------------------- */
 @media (hover: hover) and (pointer: fine) {
   .sketch-cursor-ring {
     position: fixed;
     top: 0;
     left: 0;
-    width: 26px;
-    height: 26px;
-    border: 1.5px dashed var(--accent-lavender, #B69AFF);
+    width: 24px;
+    height: 24px;
+    border: 1.5px dashed var(--border-primary);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
@@ -45,16 +43,16 @@
   }
 
   .sketch-cursor-ring.is-visible {
-    opacity: 0.65;
+    opacity: 0.55;
   }
 
   .sketch-cursor-ring.is-hovering {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-style: solid;
-    border-color: var(--accent-lavender, #B69AFF);
-    background-color: var(--accent-lavender-subtle, rgba(182, 154, 255, 0.1));
-    opacity: 0.95;
+    border-color: var(--border-primary);
+    background-color: rgba(128, 128, 128, 0.08);
+    opacity: 0.85;
   }
 }
 
@@ -113,115 +111,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   4. Technical Notebook Annotations (Computer Engineering Aesthetic)
-   -------------------------------------------------------------------------- */
-.tech-annotation-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-  padding: 0 0.25rem;
-}
-
-.tech-annotation {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  user-select: none;
-  opacity: 0.85;
-}
-
-.tech-annotation::before {
-  content: '//';
-  color: var(--accent-lavender, #B69AFF);
-  font-weight: 700;
-}
-
-.tech-badge-pill {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.68rem;
-  padding: 0.18rem 0.55rem;
-  border: 1px dashed var(--border-primary);
-  border-radius: 4px;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  user-select: none;
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.tech-badge-pill:hover {
-  border-color: var(--accent-lavender, #B69AFF);
-  color: var(--text-primary);
-}
-
-.tech-dot-indicator {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-lavender, #B69AFF);
-  box-shadow: 0 0 6px var(--accent-lavender);
-  animation: tech-pulse 2.2s infinite ease-in-out;
-}
-
-@keyframes tech-pulse {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-}
-
-/* Blueprint Corner Crosshairs */
-.has-crosshairs {
-  position: relative;
-}
-
-.has-crosshairs::before,
-.has-crosshairs::after {
-  content: '+';
-  position: absolute;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
-  line-height: 1;
-  color: var(--accent-lavender, #B69AFF);
-  pointer-events: none;
-  opacity: 0.65;
-  transition: opacity 0.2s ease, transform 0.25s ease;
-}
-
-.has-crosshairs::before {
-  top: 8px;
-  left: 8px;
-}
-
-.has-crosshairs::after {
-  bottom: 8px;
-  right: 8px;
-}
-
-.has-crosshairs:hover::before {
-  opacity: 1;
-  transform: translate(-1px, -1px);
-}
-
-.has-crosshairs:hover::after {
-  opacity: 1;
-  transform: translate(1px, 1px);
-}
-
-/* --------------------------------------------------------------------------
-   5. Interactive Typography & Section Titles
+   4. Interactive Typography & Section Titles
    -------------------------------------------------------------------------- */
 .interactive-heading {
   position: relative;
@@ -232,7 +122,7 @@
   display: block;
   width: 0%;
   height: 2px;
-  background: var(--accent-lavender, #B69AFF);
+  background: var(--border-primary);
   margin-top: 4px;
   border-radius: 2px;
   transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -243,24 +133,14 @@
   width: 100%;
 }
 
-.sketch-word-highlight {
-  position: relative;
-  display: inline-block;
-  transition: color 0.2s ease;
-}
-
-.sketch-word-highlight:hover {
-  color: var(--accent-lavender, #B69AFF);
-}
-
 /* --------------------------------------------------------------------------
-   6. Microinteractions & Card Refinements
+   5. Microinteractions & Card Hover Effects (Strict Monochrome)
    -------------------------------------------------------------------------- */
 .brief-project-card,
 .github-repo-card,
 .art-archive-card,
 .github-card,
-.about-box {
+.content-box {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.25s ease;
@@ -268,7 +148,8 @@
 
 .brief-project-card:hover,
 .github-repo-card:hover {
-  border-color: var(--accent-lavender, #B69AFF) !important;
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0px var(--border-primary);
 }
 
 .brief-project-card .brief-card-img {
@@ -279,10 +160,9 @@
   transform: scale(1.03);
 }
 
-/* Hand-drawn outline highlight on focus/hover */
 .art-archive-card:hover {
-  border-color: var(--accent-lavender, #B69AFF);
-  box-shadow: 8px 8px 0px var(--border-primary), 0 0 16px rgba(182, 154, 255, 0.15);
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--border-primary);
 }
 
 .art-archive-avatar-wrap {
@@ -305,8 +185,8 @@
 .art-feature-chip:hover,
 .repo-lang-tag:hover,
 .skill-chip:hover {
-  border-color: var(--accent-lavender, #B69AFF);
-  background: var(--accent-lavender-subtle, rgba(182, 154, 255, 0.12));
+  border-color: var(--border-primary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   transform: translateY(-2px);
 }
@@ -320,12 +200,6 @@
               border-color 0.18s ease;
 }
 
-.sketch-btn:hover,
-.art-archive-cta-btn:hover,
-.brief-explore-btn:hover {
-  border-color: var(--accent-lavender, #B69AFF);
-}
-
 .art-archive-cta-btn:hover svg {
   transform: translate(3px, -3px);
   transition: transform 0.2s ease;
@@ -336,14 +210,14 @@
 }
 
 /* --------------------------------------------------------------------------
-   7. Hero Parallax Dynamic Layers
+   6. Hero Parallax Dynamic Layers
    -------------------------------------------------------------------------- */
 .room-stage .room-layer {
   will-change: transform;
 }
 
 /* --------------------------------------------------------------------------
-   8. Accessibility & Reduced Motion Override
+   7. Accessibility & Reduced Motion Override
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -362,10 +236,5 @@
   .scroll-progress-line,
   .sketch-cursor-ring {
     display: none !important;
-  }
-
-  .has-crosshairs::before,
-  .has-crosshairs::after {
-    transform: none !important;
   }
 }

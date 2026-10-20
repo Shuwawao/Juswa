@@ -15,12 +15,6 @@
   --color-gray-dark: #333333;
   --color-gray-light: #CCCCCC;
 
-  /* JUSWA Brand Lavender / Purple Accent */
-  --accent-lavender: #B69AFF;
-  --accent-lavender-subtle: rgba(182, 154, 255, 0.12);
-  --accent-lavender-glow: rgba(182, 154, 255, 0.28);
-  --accent-lavender-border: rgba(182, 154, 255, 0.45);
-
   /* Default Light Theme Variables */
   --bg-primary: var(--color-white);
   --bg-secondary: var(--color-white-secondary);

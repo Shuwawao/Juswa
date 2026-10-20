@@ -202,8 +202,6 @@ export function initRoomParallax() {
   const sunEl = document.getElementById('room-sun');
   const moonEl = document.getElementById('room-moon');
   const lightEl = document.querySelector('.layer-light');
-  const shelfEl = document.querySelector('.layer-shelf');
-  const propsEl = document.querySelectorAll('.layer-props');
 
   let targetX = 0;
   let targetY = 0;
@@ -245,19 +243,12 @@ export function initRoomParallax() {
 
     const celestialX = currentX * -5;
     const celestialY = currentY * -3;
-    const lightX = currentX * 3;
+    const lightX = currentX * 3.5;
     const lightY = currentY * 2;
-    const shelfX = currentX * 2;
-    const shelfY = currentY * 1.2;
 
     if (sunEl) sunEl.style.transform = `translate3d(${celestialX}px, ${celestialY}px, 0)`;
     if (moonEl) moonEl.style.transform = `translate3d(${celestialX}px, ${celestialY}px, 0)`;
     if (lightEl) lightEl.style.transform = `translate3d(${lightX}px, ${lightY}px, 0)`;
-    if (shelfEl) shelfEl.style.transform = `translate3d(${shelfX}px, ${shelfY}px, 0)`;
-
-    propsEl.forEach(prop => {
-      prop.style.transform = `translate3d(${shelfX * 0.8}px, ${shelfY * 0.8}px, 0)`;
-    });
 
     if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
       rafParallaxId = requestAnimationFrame(loop);
@@ -276,8 +267,6 @@ export function initRoomParallax() {
     if (sunEl) sunEl.style.transform = '';
     if (moonEl) moonEl.style.transform = '';
     if (lightEl) lightEl.style.transform = '';
-    if (shelfEl) shelfEl.style.transform = '';
-    propsEl.forEach(prop => { prop.style.transform = ''; });
   };
 }
 
