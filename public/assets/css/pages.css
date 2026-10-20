@@ -416,6 +416,64 @@
   border-radius: 4px;
 }
 
+.project-status.status-wip {
+  border: 1.5px solid var(--border-primary);
+  background: var(--bg-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.project-status.status-wip::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-dot 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* Project Card Media Preview */
+.project-media-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0.85rem 0 1rem 0;
+  border: 2.5px solid var(--border-primary);
+  border-radius: var(--sketch-border-sm);
+  background: var(--bg-secondary);
+  overflow: hidden;
+  box-shadow: 3px 3px 0px var(--border-primary);
+}
+
+.project-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: grayscale(100%) contrast(115%) brightness(96%);
+  transition: filter var(--transition-normal), transform var(--transition-normal);
+}
+
+.project-card:hover .project-card-img,
+.project-media-wrapper:hover .project-card-img {
+  filter: grayscale(0%) contrast(100%) brightness(100%);
+  transform: scale(1.025);
+}
+
 .project-name {
   font-family: var(--font-sans);
   font-size: 1.5rem;
@@ -740,6 +798,163 @@
   color: var(--text-secondary);
 }
 
+/* Brief Projects Showcase (Main Room Page) */
+.home-projects-brief {
+  position: relative;
+  background: var(--card-bg);
+  border: 3px solid var(--border-primary);
+  border-radius: var(--sketch-border);
+  box-shadow: 6px 6px 0px var(--border-primary);
+  padding: 2rem 2.2rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.home-projects-brief:hover {
+  box-shadow: 8px 8px 0px var(--border-primary);
+}
+
+.brief-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px dashed var(--border-primary);
+}
+
+.brief-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brief-section-title {
+  font-family: var(--font-sketch);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.brief-section-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.brief-explore-btn {
+  font-size: 0.85rem;
+  padding: 0.45rem 0.9rem;
+}
+
+.brief-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.4rem;
+}
+
+.brief-project-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--sketch-border-sm);
+  padding: 0.85rem;
+  box-shadow: 3px 3px 0px var(--border-primary);
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.brief-project-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0px var(--border-primary);
+}
+
+.brief-img-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1.8px solid var(--border-primary);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.brief-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: grayscale(100%) contrast(115%) brightness(96%);
+  transition: filter var(--transition-normal), transform var(--transition-normal);
+}
+
+.brief-project-card:hover .brief-card-img {
+  filter: grayscale(0%) contrast(100%) brightness(100%);
+  transform: scale(1.04);
+}
+
+.brief-status-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border: 1.5px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  box-shadow: 1.5px 1.5px 0px var(--border-primary);
+}
+
+.brief-status-tag.status-wip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.brief-status-tag.status-wip::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-dot 1.8s infinite ease-in-out;
+}
+
+.brief-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.brief-meta-line {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.brief-card-title {
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.brief-card-desc {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
 /* ==========================================================================
    Responsive Proportions for Pages & Home Intro
    ========================================================================== */
@@ -899,6 +1114,22 @@
   .repo-desc {
     font-size: 0.82rem;
     margin-bottom: 0.75rem;
+  }
+  .home-projects-brief {
+    padding: 1.1rem 0.9rem;
+    box-shadow: 4px 4px 0px var(--border-primary);
+  }
+  .brief-section-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.7rem;
+    gap: 0.6rem;
+  }
+  .brief-section-title {
+    font-size: 1.3rem;
+  }
+  .brief-projects-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 

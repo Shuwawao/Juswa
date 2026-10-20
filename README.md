@@ -51,9 +51,9 @@ The homepage presents a cohesive 2D illustrated workspace built on a responsive 
 
 2. **[Projects Page (`projects.html`)](./projects.html)**:
    - Blueprint & notebook layout with category filters (*All*, *Web & Software*, *Hardware & IoT*, *Digital Art*).
-   - **Synced N**: Church Music Ministry Schedule and Lineup Management System.
+   - **Synced N**: Church Music Ministry Schedule and Lineup Management System *(Work in Progress / Currently Building)*.
    - **Smart Assistive Cane for the Visually Impaired**: Ultrasonic obstacle detection & haptic feedback mobility device.
-   - **Smart Medication System (MediSync)**: Automated carousel dispenser with companion Android application.
+   - **Smart Medication System (MediSync)**: Automated carousel dispenser with companion Android application *(Work in Progress / Currently Building)*.
    - **Juswa Draws**: Digital illustration portfolio.
 
 ---
