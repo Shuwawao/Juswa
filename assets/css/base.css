@@ -4,6 +4,7 @@
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Pixelify+Sans:wght@600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;600;800;900&display=swap');
+@import './animations.css';
 
 :root {
   /* Strict Monochrome Color Tokens */
@@ -13,6 +14,12 @@
   --color-white-secondary: #F5F5F5;
   --color-gray-dark: #333333;
   --color-gray-light: #CCCCCC;
+
+  /* JUSWA Brand Lavender / Purple Accent */
+  --accent-lavender: #B69AFF;
+  --accent-lavender-subtle: rgba(182, 154, 255, 0.12);
+  --accent-lavender-glow: rgba(182, 154, 255, 0.28);
+  --accent-lavender-border: rgba(182, 154, 255, 0.45);
 
   /* Default Light Theme Variables */
   --bg-primary: var(--color-white);
@@ -46,17 +53,17 @@
 
 /* Dark Theme Overrides */
 [data-theme="dark"] {
-  --bg-primary: var(--color-black);
-  --bg-secondary: var(--color-black-secondary);
+  --bg-primary: #0C0C0F;
+  --bg-secondary: #141418;
   --text-primary: var(--color-white);
   --text-secondary: var(--color-gray-light);
   --border-primary: var(--color-white);
-  --card-bg: var(--color-black-secondary);
+  --card-bg: #141418;
   --card-border: var(--color-white);
   --shadow-primary: 4px 4px 0px var(--color-white);
   --shadow-hover: 6px 6px 0px var(--color-white);
   --hatch-line: var(--color-white);
-  --hatch-bg: var(--color-black);
+  --hatch-bg: #0C0C0F;
   --overlay-bg: rgba(255, 255, 255, 0.1);
 }
 

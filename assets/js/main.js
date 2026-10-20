@@ -10,6 +10,7 @@ import './audio.js';
 import { initMusicPlayer } from './player.js';
 import { initRoom, cleanupRoom } from './room.js';
 import { initProjects } from './projects.js';
+import { initAnimations, refreshAnimations } from './animations.js';
 
 let roleRotatorInterval = null;
 
@@ -266,6 +267,9 @@ export function navigateToPage(url, pushState = true) {
 
           // Re-bind interactive sounds and links
           bindPageInteractions();
+
+          // Refresh scroll reveals and parallax for new content
+          refreshAnimations();
         }, 150);
       }
 
@@ -294,6 +298,7 @@ function bootstrapApp() {
   bindNavMenuControls();
   bindPageInteractions();
   initMusicPlayer();
+  initAnimations();
 
   if (window.JuswaTheme) {
     window.JuswaTheme.syncRoomElements(window.JuswaTheme.currentTheme);

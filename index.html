@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/room.css">
   <link rel="stylesheet" href="assets/css/pages.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
 </head>
 <body>
 
@@ -30,6 +31,15 @@
   <!-- Interactive Room Experience -->
   <main class="room-section">
     <div class="room-wrapper">
+
+      <!-- Workspace Engineering Annotation -->
+      <div class="tech-annotation-bar" data-reveal="fade-in">
+        <span class="tech-annotation">SEC: 01 // INTERACTIVE WORKSPACE</span>
+        <span class="tech-badge-pill">
+          <span class="tech-dot-indicator"></span>
+          STATUS: ONLINE // 4TH_YEAR_CE
+        </span>
+      </div>
 
       <div id="room-stage" class="room-stage" role="region" aria-label="Interactive Sketchbook Room">
         <!-- 1. Background Layer -->
@@ -141,11 +151,14 @@
       <section class="home-intro-section" aria-label="Introduction & GitHub Activity">
         
         <!-- Bio Information (Clean text, no box) -->
-        <div class="home-bio-clean">
-          <h2 class="home-bio-title">Joshua Lagare (Juswa)</h2>
+        <div class="home-bio-clean" data-reveal="fade-up">
+          <h2 class="home-bio-title interactive-heading">
+            Joshua Lagare (Juswa)
+            <span class="heading-accent-line" aria-hidden="true"></span>
+          </h2>
 
           <p class="home-bio-text">
-            I'm a 4th Year Computer Engineering Student Currently studying at ICCT COLLEGES, I am passionate with Digital arts, Animation, IOT and Embedded Projects, Software and Hardware Development.
+            I'm a 4th Year Computer Engineering Student Currently studying at ICCT COLLEGES, I am passionate with <span class="sketch-word-highlight">Digital arts</span>, <span class="sketch-word-highlight">Animation</span>, <span class="sketch-word-highlight">IOT and Embedded Projects</span>, and <span class="sketch-word-highlight">Software &amp; Hardware Development</span>.
           </p>
 
           <div class="home-focus-chip">
@@ -157,8 +170,17 @@
           </div>
         </div>
 
+        <!-- Tech Annotation Bar: Section 02 -->
+        <div class="tech-annotation-bar" data-reveal="fade-in">
+          <span class="tech-annotation">SEC: 02 // CODE ARCHIVE &amp; ACTIVITY</span>
+          <span class="tech-badge-pill">
+            <span class="tech-dot-indicator"></span>
+            REPOS: 3 ACTIVE
+          </span>
+        </div>
+
         <!-- GitHub Contributions & Activity Card -->
-        <article class="github-card">
+        <article class="github-card has-crosshairs" data-reveal="fade-up">
           <div class="github-header">
             <div class="github-title-group">
               <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true">
@@ -182,7 +204,7 @@
           </div>
 
           <!-- GitHub Recent Activities & Repositories Grid -->
-          <div class="github-repos-grid">
+          <div class="github-repos-grid" data-reveal-stagger>
             <a href="https://github.com/Shuwawao/my-portfolio" target="_blank" rel="noopener noreferrer" class="github-repo-card">
               <div class="repo-card-top">
                 <span class="repo-name">my-portfolio</span>
@@ -221,15 +243,24 @@
           </div>
         </article>
 
+        <!-- Tech Annotation Bar: Section 03 -->
+        <div class="tech-annotation-bar" data-reveal="fade-in">
+          <span class="tech-annotation">SEC: 03 // CURRENT BUILDS &amp; PROTOTYPES</span>
+          <span class="tech-badge-pill">DISCIPLINE: EMBEDDED &amp; SOFTWARE</span>
+        </div>
+
         <!-- Brief Projects Preview (Featured Builds) -->
-        <article class="home-projects-brief" aria-label="Featured Projects Preview">
+        <article class="home-projects-brief has-crosshairs" data-reveal="fade-up" aria-label="Featured Projects Preview">
           <div class="brief-section-header">
             <div class="brief-title-group">
               <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/>
               </svg>
               <div>
-                <h3 class="brief-section-title">Current Builds & Prototypes</h3>
+                <h3 class="brief-section-title interactive-heading">
+                  Current Builds & Prototypes
+                  <span class="heading-accent-line" aria-hidden="true"></span>
+                </h3>
                 <span class="brief-section-subtitle">Engineering systems and software currently in development</span>
               </div>
             </div>
@@ -238,7 +269,7 @@
             </a>
           </div>
 
-          <div class="brief-projects-grid">
+          <div class="brief-projects-grid" data-reveal-stagger>
             <!-- Project 1: Synced N -->
             <a href="projects.html" class="brief-project-card">
               <div class="brief-img-wrapper">
@@ -280,8 +311,14 @@
           </div>
         </article>
 
+        <!-- Tech Annotation Bar: Section 04 -->
+        <div class="tech-annotation-bar" data-reveal="fade-in">
+          <span class="tech-annotation">SEC: 04 // DIGITAL ART &amp; ARCHIVE</span>
+          <span class="tech-badge-pill">STATUS: OPEN FOR COMMISSIONS</span>
+        </div>
+
         <!-- Commissions & Extended Art Archive Banner (Recreated Showcase) -->
-        <article class="art-archive-card" aria-label="Commissions & Extended Art Archive">
+        <article class="art-archive-card has-crosshairs" data-reveal="fade-up" aria-label="Commissions & Extended Art Archive">
 
           <!-- Left Column: Still Growing Character Avatar -->
           <div class="art-archive-avatar-col">
@@ -299,7 +336,10 @@
               <span class="art-archive-category">COMMISSIONS &amp; EXTENDED ART ARCHIVE</span>
             </div>
             
-            <h3 class="art-archive-title">Wanna see more of my work? Or want to commission me?</h3>
+            <h3 class="art-archive-title interactive-heading">
+              Wanna see more of my work? Or want to commission me?
+              <span class="heading-accent-line" aria-hidden="true"></span>
+            </h3>
             
             <p class="art-archive-desc">
               Visit my dedicated illustration portfolio on <a href="https://juswa-draws.vercel.app/" target="_blank" rel="noopener noreferrer" class="art-archive-domain-link"><strong>juswa-draws.vercel.app</strong></a> to browse character designs, concept sketches, fan art studies, client inquiries, and custom commission guidelines.

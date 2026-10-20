@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/room.css">
   <link rel="stylesheet" href="assets/css/pages.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
 </head>
 <body>
 
@@ -99,14 +100,26 @@
       <span class="page-tag">BLUEPRINTS & CODE</span>
     </div>
 
+    <!-- Tech Annotation Bar -->
+    <div class="tech-annotation-bar" data-reveal="fade-in">
+      <span class="tech-annotation">SEC: 03 // BLUEPRINTS &amp; CODE ARCHIVE</span>
+      <span class="tech-badge-pill">
+        <span class="tech-dot-indicator"></span>
+        PROJECTS: 4 VERIFIED
+      </span>
+    </div>
+
     <!-- Header Section -->
-    <header class="projects-header">
-      <h1 class="projects-title">Engineering & Creative Projects</h1>
+    <header class="projects-header" data-reveal="fade-up">
+      <h1 class="projects-title interactive-heading">
+        Engineering &amp; Creative Projects
+        <span class="heading-accent-line" aria-hidden="true"></span>
+      </h1>
       <p class="projects-subtitle">A collection of hardware prototypes, software systems, and digital artwork.</p>
     </header>
 
     <!-- Category Filter Controls -->
-    <nav class="filter-bar" aria-label="Project Category Filter">
+    <nav class="filter-bar" data-reveal="fade-up" aria-label="Project Category Filter">
       <button class="filter-chip active" data-filter="all">All Projects (4)</button>
       <button class="filter-chip" data-filter="software">Web & Software (1)</button>
       <button class="filter-chip" data-filter="hardware">Hardware & IoT (2)</button>
@@ -114,10 +127,10 @@
     </nav>
 
     <!-- Projects Grid -->
-    <section class="projects-grid" aria-label="Project Cards">
+    <section class="projects-grid" data-reveal-stagger aria-label="Project Cards">
 
       <!-- Project 1: Synced N -->
-      <article class="project-card" data-category="software">
+      <article class="project-card has-crosshairs" data-category="software" data-reveal="fade-up">
         <div>
           <div class="card-top">
             <span class="project-category">Web & Database</span>
@@ -126,7 +139,10 @@
           <div class="project-media-wrapper">
             <img src="assets/images/projects/synced-n.png" alt="Synced N Mobile Application UI Mockups and Management Flow" class="project-card-img" loading="lazy">
           </div>
-          <h2 class="project-name">Synced N — Church Music Ministry Schedule & Lineup Management</h2>
+          <h2 class="project-name interactive-heading">
+            Synced N — Church Music Ministry Schedule &amp; Lineup Management
+            <span class="heading-accent-line" aria-hidden="true"></span>
+          </h2>
           <p class="project-desc">
             A comprehensive web scheduling and lineup coordination platform engineered specifically for church music ministries (Currently in progress / actively building). Eliminates fragmented group-chat coordination by managing volunteer musician rosters, vocal lineup schedules, setlist song charts, and automated rehearsal agendas in one central dashboard.
           </p>
@@ -144,7 +160,7 @@
       </article>
 
       <!-- Project 2: Smart Assistive Cane -->
-      <article class="project-card" data-category="hardware">
+      <article class="project-card has-crosshairs" data-category="hardware" data-reveal="fade-up">
         <div>
           <div class="card-top">
             <span class="project-category">Embedded IoT</span>
@@ -153,7 +169,10 @@
           <div class="project-media-wrapper">
             <img src="assets/images/projects/smart-cane.png" alt="Smart Assistive Cane Prototype Architecture & Circuit Schematic" class="project-card-img" loading="lazy">
           </div>
-          <h2 class="project-name">Smart Assistive Cane for the Visually Impaired</h2>
+          <h2 class="project-name interactive-heading">
+            Smart Assistive Cane for the Visually Impaired
+            <span class="heading-accent-line" aria-hidden="true"></span>
+          </h2>
           <p class="project-desc">
             An intelligent mobility aid engineered to assist visually impaired individuals navigate unfamiliar environments safely. Equipped with multi-angle ultrasonic sensors for obstacle detection, ground elevation sensors to detect curbs and steps, and an ergonomic handle providing intuitive haptic pulse feedback and acoustic audio alerts.
           </p>
@@ -172,7 +191,7 @@
       </article>
 
       <!-- Project 3: Smart Medication System / MediSync -->
-      <article class="project-card" data-category="hardware">
+      <article class="project-card has-crosshairs" data-category="hardware" data-reveal="fade-up">
         <div>
           <div class="card-top">
             <span class="project-category">IoT & Mobile App</span>
@@ -181,7 +200,10 @@
           <div class="project-media-wrapper">
             <img src="assets/images/projects/medisync.png" alt="MediSync Innovations Automated Pill Dispenser and Mobile App" class="project-card-img" loading="lazy">
           </div>
-          <h2 class="project-name">Smart Medication System (MediSync)</h2>
+          <h2 class="project-name interactive-heading">
+            Smart Medication System (MediSync)
+            <span class="heading-accent-line" aria-hidden="true"></span>
+          </h2>
           <p class="project-desc">
             An automated timed pill dispenser coupled with an Android companion application designed to assist elderly patients and caretakers (Currently in progress / actively building). Features an embedded stepper motor carousel for precise pill release, visual and buzzer reminders, and real-time synchronization with an Android app for dosage schedules and missed-dose push alerts.
           </p>
@@ -200,7 +222,7 @@
       </article>
 
       <!-- Project 4: Juswa Draws -->
-      <article class="project-card" data-category="art">
+      <article class="project-card has-crosshairs" data-category="art" data-reveal="fade-up">
         <div>
           <div class="card-top">
             <span class="project-category">Creative Digital Art</span>
@@ -209,7 +231,10 @@
           <div class="project-media-wrapper">
             <img src="assets/images/art/still-growing.png" alt="Juswa Digital Art Showcase - Still Growing" class="project-card-img" loading="lazy">
           </div>
-          <h2 class="project-name">Juswa Draws — Digital Illustration Showcase</h2>
+          <h2 class="project-name interactive-heading">
+            Juswa Draws — Digital Illustration Showcase
+            <span class="heading-accent-line" aria-hidden="true"></span>
+          </h2>
           <p class="project-desc">
             The dedicated digital art and illustration showcase for Joshua Lagare's artistic work. Features original character designs, expressive comic line art, environmental concepts, and digital painting studies influenced by cartoon aesthetics and comic book storytelling.
           </p>
