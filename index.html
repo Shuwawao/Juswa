@@ -497,21 +497,22 @@
     <div class="community-modal-card">
       <!-- Header with Room Title, Tabs and Close Button -->
       <div class="community-modal-header">
-        <div class="community-header-left">
+        <div class="community-header-top">
           <div class="community-room-title">
             <span class="presence-live-dot" aria-hidden="true"></span>
             <span>COMMUNITY SPACE</span>
+            <span class="community-24h-badge">24h live</span>
           </div>
-          <div class="community-tabs-group" role="tablist">
-            <button id="tab-btn-chat" class="community-tab-btn active" role="tab" aria-selected="true">
-              💬 Chat
-            </button>
-            <button id="tab-btn-lounge" class="community-tab-btn" role="tab" aria-selected="false">
-              🕹️ 2D Room
-            </button>
-          </div>
+          <button id="community-modal-close" class="community-close-btn" aria-label="Close modal">✕</button>
         </div>
-        <button id="community-modal-close" class="community-close-btn" aria-label="Close modal">✕</button>
+        <div class="community-tabs-group" role="tablist">
+          <button id="tab-btn-chat" class="community-tab-btn active" role="tab" aria-selected="true">
+            💬 Chat
+          </button>
+          <button id="tab-btn-lounge" class="community-tab-btn" role="tab" aria-selected="false">
+            🕹️ 2D Room
+          </button>
+        </div>
       </div>
 
       <!-- Split View Body Container -->
@@ -520,7 +521,7 @@
         <div id="community-view-chat" class="community-view-chat">
           <div class="community-stats-bar">
             <span id="community-message-count">Loading messages...</span>
-            <span>Live Guestbook</span>
+            <span class="stats-reset-pill">resets every 24h ⏳</span>
           </div>
 
           <div id="community-messages-list" class="community-messages-list" role="log" aria-live="polite">
@@ -550,6 +551,9 @@
         <div id="community-view-lounge" class="community-view-lounge">
           <div class="sketch-lounge-canvas-wrap">
             <canvas id="sketch-lounge-canvas" class="sketch-lounge-canvas" width="640" height="420"></canvas>
+            <div class="lounge-mobile-controls-hint" aria-hidden="true">
+              <span>🕹️ tap to move · [space] to wave</span>
+            </div>
           </div>
         </div>
       </div>

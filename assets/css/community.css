@@ -1,6 +1,7 @@
 /* ==========================================================================
    JUSWA — COMMUNITY PRESENCE, LIVE CHAT & 2D LOUNGE
    Strict Monochrome Hand-Drawn Sketchbook Aesthetic
+   Fully Responsive for Desktop, Tablet, & Mobile (iOS / Android)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -126,18 +127,19 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. Community Modal & Drawer
+   2. Community Modal & Backdrop
    -------------------------------------------------------------------------- */
 .community-modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 99999;
   background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 1.5rem;
+  touch-action: pan-y;
 }
 
 .community-modal-backdrop.is-open {
@@ -151,7 +153,8 @@
   position: relative;
   width: 520px;
   max-width: 100%;
-  max-height: 85vh;
+  height: 85vh;
+  max-height: 820px;
   background: var(--bg-primary);
   border: 3px solid var(--border-primary);
   border-radius: var(--sketch-border);
@@ -186,17 +189,19 @@
 /* Header & Tabs */
 .community-modal-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 0.85rem 1.1rem;
   border-bottom: 2px solid var(--border-primary);
   background: var(--bg-secondary);
+  flex-shrink: 0;
 }
 
-.community-header-left {
+.community-header-top {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .community-room-title {
@@ -210,13 +215,27 @@
   color: var(--text-primary);
 }
 
+.community-24h-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+}
+
 .community-tabs-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
+  width: 100%;
 }
 
 .community-tab-btn {
+  flex: 1;
   font-family: var(--font-sketch);
   font-size: 1.05rem;
   font-weight: 700;
@@ -227,6 +246,10 @@
   border-radius: var(--sketch-border-sm);
   cursor: pointer;
   box-shadow: 2px 2px 0px var(--border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
 }
 
@@ -256,6 +279,7 @@
   justify-content: center;
   box-shadow: 2px 2px 0px var(--border-primary);
   transition: transform var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .community-close-btn:hover {
@@ -263,13 +287,23 @@
 }
 
 /* --------------------------------------------------------------------------
-   3. Chat View Body
+   3. Chat View & Messages
    -------------------------------------------------------------------------- */
+.community-modal-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .community-view-chat {
   display: flex;
   flex-direction: column;
-  height: 480px;
-  max-height: 55vh;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  background: var(--bg-primary);
 }
 
 .community-stats-bar {
@@ -282,11 +316,20 @@
   color: var(--text-secondary);
   border-bottom: 1px dashed var(--border-primary);
   background: var(--bg-primary);
+  flex-shrink: 0;
+}
+
+.stats-reset-pill {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  opacity: 0.85;
 }
 
 .community-messages-list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 1rem 1.1rem;
   display: flex;
   flex-direction: column;
@@ -322,6 +365,7 @@
 
 .chat-msg-content {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -330,7 +374,8 @@
 .chat-msg-header {
   display: flex;
   align-items: baseline;
-  gap: 0.4rem;
+  flex-wrap: wrap;
+  gap: 0.35rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
 }
@@ -342,6 +387,7 @@
 
 .chat-msg-meta {
   color: var(--text-secondary);
+  font-size: 0.68rem;
 }
 
 .chat-msg-bubble {
@@ -362,21 +408,24 @@
 }
 
 .chat-msg-row.is-me .chat-msg-bubble {
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.09);
+  border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 [data-theme="dark"] .chat-msg-row.is-me .chat-msg-bubble {
   background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
-/* Chat Input & User Bar */
+/* Chat Input Footer */
 .community-chat-footer {
   border-top: 1.5px solid var(--border-primary);
   padding: 0.75rem 1.1rem;
   background: var(--bg-secondary);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.45rem;
+  flex-shrink: 0;
 }
 
 .chat-user-indicator {
@@ -392,6 +441,7 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
+  min-width: 0;
 }
 
 .avatar-picker-mini-btn {
@@ -406,6 +456,7 @@
   align-items: center;
   justify-content: center;
   box-shadow: 1px 1px 0px var(--border-primary);
+  flex-shrink: 0;
 }
 
 .avatar-picker-mini-btn svg {
@@ -421,13 +472,23 @@
   color: var(--text-primary);
   border: 1.5px solid var(--border-primary);
   border-radius: 4px;
-  padding: 0.1rem 0.4rem;
+  padding: 0.1rem 0.45rem;
   cursor: pointer;
   box-shadow: 1px 1px 0px var(--border-primary);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nickname-pill-btn:hover {
   text-decoration: underline;
+}
+
+.chat-location-tag {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .community-chat-form {
@@ -439,7 +500,7 @@
   flex: 1;
   padding: 0.55rem 0.85rem;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 16px; /* Prevents auto-zoom on iOS */
   color: var(--text-primary);
   background: var(--bg-primary);
   border: 1.5px solid var(--border-primary);
@@ -465,6 +526,7 @@
   cursor: pointer;
   box-shadow: 2px 2px 0px var(--border-primary);
   transition: transform var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .community-send-btn:hover {
@@ -473,18 +535,12 @@
 }
 
 /* --------------------------------------------------------------------------
-   4. Split View Body & 2D Lounge
+   4. 2D Walkable Lounge View
    -------------------------------------------------------------------------- */
-.community-modal-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
 .community-view-lounge {
   flex: 1;
+  min-height: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -497,7 +553,8 @@
   position: relative;
   width: 100%;
   flex: 1;
-  min-height: 280px;
+  min-height: 0;
+  height: 100%;
   overflow: hidden;
   background: var(--bg-primary);
 }
@@ -506,11 +563,33 @@
   width: 100%;
   height: 100%;
   display: block;
+  touch-action: none; /* Crucial for mobile touch-walking */
+}
+
+.lounge-mobile-controls-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  box-shadow: 2px 2px 0px var(--border-primary);
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+  z-index: 5;
 }
 
 /* --------------------------------------------------------------------------
-   5. Responsive Styles (Desktop Split Screen & Mobile Tabs)
+   5. Responsive Breakpoints (Desktop Split vs. Mobile App Flow)
    -------------------------------------------------------------------------- */
+
+/* Desktop & Large Tablets: Side-by-side split screen */
 @media (min-width: 960px) {
   .community-modal-backdrop {
     background: rgba(0, 0, 0, 0.45);
@@ -524,13 +603,22 @@
     max-height: 800px;
   }
 
-  .community-modal-body {
+  .community-modal-header {
     flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  /* Hide mobile tab switcher on desktop since both columns are side-by-side */
+  .community-header-top {
+    width: 100%;
+  }
+
   .community-tabs-group {
-    display: none;
+    display: none !important; /* Hide tabs on desktop since both views are side-by-side */
+  }
+
+  .community-modal-body {
+    flex-direction: row;
   }
 
   .community-view-chat {
@@ -550,41 +638,37 @@
   }
 }
 
+/* Tablets & Mobile (Below 960px): Tabbed modal */
 @media (max-width: 959px) {
+  .community-modal-backdrop {
+    padding: 1rem;
+  }
+
   .community-modal-card {
     width: 96vw;
-    max-height: 90vh;
+    max-width: 680px;
+    height: 90vh;
+    max-height: 820px;
   }
 
-  .community-view-chat {
-    height: 440px;
+  .community-tabs-group {
+    display: flex;
+    width: 100%;
   }
 
-  .sketch-lounge-canvas-wrap {
-    height: 380px;
+  .community-tab-btn {
+    padding: 0.45rem 0.5rem;
+    font-size: 1rem;
   }
 }
 
+/* Small Tablets & Large Phones (Below 768px) */
 @media (max-width: 768px) {
   .community-presence-pill {
-    bottom: 80px; /* Above the bottom mobile player */
-    right: 16px;
-    padding: 0.5rem 0.75rem;
-  }
-
-  .community-view-chat {
-    height: 400px;
-  }
-
-  .sketch-lounge-canvas-wrap {
-    height: 320px;
-  }
-}
-
-@media (max-width: 480px) {
-  .community-presence-pill {
-    bottom: 74px;
-    right: 12px;
+    bottom: 84px; /* Placed safely above bottom audio player */
+    right: 14px;
+    padding: 0.45rem 0.75rem;
+    max-width: 215px;
   }
 
   .presence-mini-avatar {
@@ -596,16 +680,133 @@
     font-size: 0.75rem;
   }
 
+  .presence-actions-row {
+    font-size: 0.85rem;
+    gap: 0.5rem;
+  }
+}
+
+/* Mobile Phones (Below 640px): Full-height slick native mobile experience */
+@media (max-width: 640px) {
+  .community-modal-backdrop {
+    padding: 0; /* Full edge-to-edge mobile sheet */
+    align-items: flex-end;
+  }
+
+  .community-modal-card {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    box-shadow: none;
+  }
+
+  .community-modal-card::before {
+    display: none; /* Hide top masking tape in full-screen mobile mode */
+  }
+
+  .community-modal-header {
+    padding: 0.65rem 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .community-room-title {
+    font-size: 0.8rem;
+  }
+
+  .community-24h-badge {
+    font-size: 0.6rem;
+    padding: 0.08rem 0.35rem;
+  }
+
+  .community-close-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 1.15rem;
+  }
+
+  .community-tabs-group {
+    gap: 0.35rem;
+  }
+
   .community-tab-btn {
     font-size: 0.95rem;
-    padding: 0.3rem 0.55rem;
+    padding: 0.4rem 0.4rem;
   }
 
-  .community-view-chat {
-    height: 360px;
+  .community-stats-bar {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.7rem;
   }
 
-  .sketch-lounge-canvas-wrap {
-    height: 280px;
+  .stats-reset-pill {
+    font-size: 0.65rem;
+  }
+
+  .community-messages-list {
+    padding: 0.65rem 0.85rem;
+    gap: 0.65rem;
+  }
+
+  .chat-msg-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .chat-msg-header {
+    font-size: 0.68rem;
+  }
+
+  .chat-msg-bubble {
+    max-width: 90%;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.88rem;
+  }
+
+  .community-chat-footer {
+    padding: 0.5rem 0.85rem calc(0.5rem + env(safe-area-inset-bottom, 0px)) 0.85rem;
+  }
+
+  .chat-location-tag {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.65rem;
+  }
+
+  .nickname-pill-btn {
+    max-width: 95px;
+    font-size: 0.72rem;
+  }
+
+  .community-chat-input {
+    font-size: 16px;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .community-send-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .lounge-mobile-controls-hint {
+    bottom: 8px;
+    font-size: 0.62rem;
+    padding: 0.2rem 0.55rem;
+  }
+
+  .community-presence-pill {
+    bottom: 78px;
+    right: 10px;
+    padding: 0.4rem 0.65rem;
+    max-width: 200px;
+  }
+
+  .presence-actions-row {
+    font-size: 0.8rem;
   }
 }

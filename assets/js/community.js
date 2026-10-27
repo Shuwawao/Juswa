@@ -2,10 +2,15 @@
  * Juswa Portfolio — Community Presence, Live Chat & 2D Lounge Controller
  * Coordinates Supabase Realtime presence, live chat message feed,
  * client-side geolocation/device tagging, and the 2D walkable grid lounge.
+ * 
+ * Includes 24-hour rolling message reset & auto-cleanup so messages don't stockpile.
  */
 
 import { getSupabase, isSupabaseConfigured } from './supabase.js';
 import { SketchLounge } from './lounge.js';
+
+// 24 Hours in Milliseconds for Rolling Daily Reset
+const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
 
 // Random Sketch Nicknames Pool for New Viewers
 const RANDOM_NICKNAMES = [
@@ -115,6 +120,7 @@ class CommunityManager {
     this._initUI();
     this._setupBackend();
     this._loadInitialMessages();
+    this._startPruneTimer();
   }
 
   _generateRandomNickname() {
@@ -305,7 +311,7 @@ class CommunityManager {
       setTimeout(() => {
         if (this.lounge) this.lounge.resize();
         this._scrollToBottom();
-      }, 60);
+      }, 50);
     } else {
       this.switchTab(tab);
     }
@@ -323,7 +329,6 @@ class CommunityManager {
         onWave: (wave) => this._onPlayerWave(wave)
       });
 
-      // Immediately populate any remote players already in presence state
       this._syncLoungeFromPresence();
     } else if (this.lounge) {
       this.lounge.resume();
@@ -353,7 +358,7 @@ class CommunityManager {
       setTimeout(() => {
         if (this.lounge) this.lounge.resize();
         this._scrollToBottom();
-      }, 60);
+      }, 50);
       return;
     }
 
@@ -367,10 +372,15 @@ class CommunityManager {
       this._ensureLoungeInitialized();
       setTimeout(() => {
         if (this.lounge) this.lounge.resize();
-      }, 60);
+      }, 40);
+      setTimeout(() => {
+        if (this.lounge) this.lounge.resize();
+      }, 160);
     } else if (tab === 'chat') {
       this._scrollToBottom();
-      if (this.chatInput) this.chatInput.focus();
+      if (this.chatInput && window.innerWidth >= 640) {
+        this.chatInput.focus();
+      }
     }
   }
 
@@ -408,14 +418,13 @@ class CommunityManager {
         }
       }
 
-      // Remove any character who has left the room
       for (const id of this.lounge.remotePlayers.keys()) {
         if (!activeRemoteIds.has(id)) {
           this.lounge.removeRemotePlayer(id);
         }
       }
     } catch {
-      // presence state not ready
+      // ignore
     }
   }
 
@@ -432,7 +441,6 @@ class CommunityManager {
     try {
       console.log('[Juswa Community] Connecting to Supabase Realtime channel: juswa-community-room...');
 
-      // Unified Room Channel for Presence, Movement Broadcast & Live Chat
       this.roomChannel = this.supabase.channel('juswa-community-room', {
         config: {
           presence: { key: this.playerId },
@@ -462,7 +470,6 @@ class CommunityManager {
           }
         }
 
-        // Consistent avatar disappearance: Remove remote players no longer in presence state
         if (this.lounge) {
           for (const id of this.lounge.remotePlayers.keys()) {
             if (!activeRemoteIds.has(id)) {
@@ -511,9 +518,12 @@ class CommunityManager {
         })
         .on('broadcast', { event: 'chat_message' }, ({ payload }) => {
           if (payload && payload.nickname !== this.nickname) {
-            const isDuplicate = this.messages.some(m => m.id === payload.id || (m.nickname === payload.nickname && m.message === payload.message));
-            if (!isDuplicate) {
-              this._appendMessage(payload);
+            const isWithin24h = (Date.now() - new Date(payload.created_at).getTime()) < TWENTY_FOUR_HOURS_MS;
+            if (isWithin24h) {
+              const isDuplicate = this.messages.some(m => m.id === payload.id || (m.nickname === payload.nickname && m.message === payload.message));
+              if (!isDuplicate) {
+                this._appendMessage(payload);
+              }
             }
           }
         })
@@ -525,7 +535,6 @@ class CommunityManager {
           }
         });
 
-      // Cleanup when leaving page
       const cleanLeave = () => {
         if (this.roomChannel) {
           try {
@@ -538,7 +547,6 @@ class CommunityManager {
       window.addEventListener('beforeunload', cleanLeave);
       window.addEventListener('pagehide', cleanLeave);
 
-      // Periodic presence position refresh (every 15s) so resting positions stay up-to-date
       setInterval(() => {
         const now = Date.now();
         if (this.roomChannel && this.lounge && (now - this.lastTrackTime > 15000)) {
@@ -556,20 +564,23 @@ class CommunityManager {
           (payload) => {
             const incoming = payload.new;
             if (incoming) {
-              const norm = {
-                id: incoming.id,
-                nickname: incoming.username || incoming.nickname || 'Visitor',
-                username: incoming.username || incoming.nickname || 'Visitor',
-                location: incoming.location || 'Earth 🌍',
-                device: incoming.device || '',
-                message: incoming.message,
-                avatar_id: incoming.avatar_id || 'sketch-1',
-                created_at: incoming.created_at
-              };
-              const isDuplicate = this.messages.some(m => m.id === norm.id || (m.message === norm.message && (m.nickname === norm.nickname || m.username === norm.username) && Math.abs(new Date(m.created_at) - new Date(norm.created_at)) < 5000));
-              if (!isDuplicate) {
-                if (typeof this.totalMessageCount === 'number') this.totalMessageCount++;
-                this._appendMessage(norm);
+              const isWithin24h = (Date.now() - new Date(incoming.created_at).getTime()) < TWENTY_FOUR_HOURS_MS;
+              if (isWithin24h) {
+                const norm = {
+                  id: incoming.id,
+                  nickname: incoming.username || incoming.nickname || 'Visitor',
+                  username: incoming.username || incoming.nickname || 'Visitor',
+                  location: incoming.location || 'Earth 🌍',
+                  device: incoming.device || '',
+                  message: incoming.message,
+                  avatar_id: incoming.avatar_id || 'sketch-1',
+                  created_at: incoming.created_at
+                };
+                const isDuplicate = this.messages.some(m => m.id === norm.id || (m.message === norm.message && (m.nickname === norm.nickname || m.username === norm.username) && Math.abs(new Date(m.created_at) - new Date(norm.created_at)) < 5000));
+                if (!isDuplicate) {
+                  if (typeof this.totalMessageCount === 'number') this.totalMessageCount++;
+                  this._appendMessage(norm);
+                }
               }
             }
           }
@@ -629,14 +640,48 @@ class CommunityManager {
     }
   }
 
-  // --- Live Chat Feed ---
+  // --- 24-Hour Clean-Up & Message Persistence ---
+
+  async _cleanupExpiredMessages() {
+    if (!this.supabase) return;
+    try {
+      const cutoff = new Date(Date.now() - TWENTY_FOUR_HOURS_MS).toISOString();
+      await this.supabase
+        .from('community_messages')
+        .delete()
+        .lt('created_at', cutoff);
+    } catch {
+      // non-blocking
+    }
+  }
+
+  _startPruneTimer() {
+    // Check every 2 minutes for messages that reached 24-hour limit
+    setInterval(() => {
+      const cutoff = Date.now() - TWENTY_FOUR_HOURS_MS;
+      const initialCount = this.messages.length;
+      this.messages = this.messages.filter(m => new Date(m.created_at).getTime() >= cutoff);
+      if (this.messages.length !== initialCount) {
+        if (typeof this.totalMessageCount === 'number') {
+          this.totalMessageCount = Math.max(0, this.totalMessageCount - (initialCount - this.messages.length));
+        }
+        this._renderAllMessages();
+      }
+    }, 120000);
+  }
 
   async _loadInitialMessages() {
+    // 1. Delete messages older than 24h from database
+    this._cleanupExpiredMessages();
+
+    const cutoffIso = new Date(Date.now() - TWENTY_FOUR_HOURS_MS).toISOString();
+
     if (this.supabase) {
       try {
         const { count, error: countErr } = await this.supabase
           .from('community_messages')
-          .select('*', { count: 'exact', head: true });
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', cutoffIso);
         if (!countErr && count !== null && count !== undefined) {
           this.totalMessageCount = count;
         }
@@ -644,20 +689,27 @@ class CommunityManager {
         const { data, error } = await this.supabase
           .from('community_messages')
           .select('*')
+          .gte('created_at', cutoffIso)
           .order('created_at', { ascending: true })
           .limit(100);
 
-        if (!error && data && data.length > 0) {
-          this.messages = data.map(m => ({
-            id: m.id,
-            nickname: m.username || m.nickname || 'Visitor',
-            username: m.username || m.nickname || 'Visitor',
-            location: m.location || 'Earth 🌍',
-            device: m.device || '',
-            message: m.message,
-            avatar_id: m.avatar_id || 'sketch-1',
-            created_at: m.created_at
-          }));
+        if (!error && data) {
+          if (data.length > 0) {
+            this.messages = data.map(m => ({
+              id: m.id,
+              nickname: m.username || m.nickname || 'Visitor',
+              username: m.username || m.nickname || 'Visitor',
+              location: m.location || 'Earth 🌍',
+              device: m.device || '',
+              message: m.message,
+              avatar_id: m.avatar_id || 'sketch-1',
+              created_at: m.created_at
+            }));
+          } else {
+            // Fresh daily room notice
+            this.messages = this._getDailyFreshWelcome();
+            if (this.totalMessageCount === null) this.totalMessageCount = 0;
+          }
           this._renderAllMessages();
           return;
         }
@@ -669,44 +721,28 @@ class CommunityManager {
     const saved = localStorage.getItem('juswa_demo_chat');
     if (saved) {
       try {
-        this.messages = JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        const active = parsed.filter(m => (Date.now() - new Date(m.created_at).getTime()) < TWENTY_FOUR_HOURS_MS);
+        this.messages = active.length > 0 ? active : this._getDailyFreshWelcome();
       } catch {
-        this.messages = this._getDefaultMessages();
+        this.messages = this._getDailyFreshWelcome();
       }
     } else {
-      this.messages = this._getDefaultMessages();
+      this.messages = this._getDailyFreshWelcome();
     }
     this._renderAllMessages();
   }
 
-  _getDefaultMessages() {
+  _getDailyFreshWelcome() {
     return [
       {
-        id: 'msg-1',
+        id: 'msg-fresh-daily',
         nickname: 'Juswa (Joshua)',
         location: 'Pasig City, PH',
         device: '💻',
-        message: 'wassup! welcome to my sketchbook room :) feel free to say hi or walk around the lounge!',
-        created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+        message: 'wassup! today\'s community room is freshly reset ✨ say hi or walk around the 2d lounge!',
+        created_at: new Date().toISOString(),
         avatar_id: 'sketch-1'
-      },
-      {
-        id: 'msg-2',
-        nickname: 'Ceetlog',
-        location: 'Manila, PH',
-        device: '💻',
-        message: 'hi idol! love the sketchbook aesthetic',
-        created_at: new Date(Date.now() - 3600000).toISOString(),
-        avatar_id: 'sketch-2'
-      },
-      {
-        id: 'msg-3',
-        nickname: 'Rwow',
-        location: 'Manila, PH',
-        device: '💻',
-        message: 'yow hello mga idol',
-        created_at: new Date(Date.now() - 120000).toISOString(),
-        avatar_id: 'sketch-3'
       }
     ];
   }
@@ -719,21 +755,26 @@ class CommunityManager {
     }
     if (this.messageCountBadge) {
       const count = (typeof this.totalMessageCount === 'number') ? this.totalMessageCount : this.messages.length;
-      this.messageCountBadge.textContent = `${count} messages`;
+      this.messageCountBadge.textContent = `${count} ${count === 1 ? 'message' : 'messages'} (today)`;
     }
     this._scrollToBottom();
   }
 
   _appendMessage(msg) {
+    // If the only message is the initial fresh notice and someone writes, replace it or keep it
+    if (this.messages.length === 1 && this.messages[0].id === 'msg-fresh-daily') {
+      this.messages = [];
+      if (this.messagesContainer) this.messagesContainer.innerHTML = '';
+    }
+
     this.messages.push(msg);
     this._appendMessageDOM(msg);
     if (this.messageCountBadge) {
       const count = (typeof this.totalMessageCount === 'number') ? this.totalMessageCount : this.messages.length;
-      this.messageCountBadge.textContent = `${count} messages`;
+      this.messageCountBadge.textContent = `${count} ${count === 1 ? 'message' : 'messages'} (today)`;
     }
     this._scrollToBottom();
 
-    // If lounge exists, pop a speech bubble over corresponding character
     if (this.lounge) {
       let targetId = this.playerId;
       if (msg.nickname !== this.nickname) {
@@ -807,7 +848,7 @@ class CommunityManager {
       });
     }
 
-    // 3. Persist to Supabase Database for future visits
+    // 3. Persist to Supabase Database (within 24h limit)
     if (this.supabase) {
       try {
         const { error } = await this.supabase
@@ -825,9 +866,11 @@ class CommunityManager {
           if (typeof this.totalMessageCount === 'number') {
             this.totalMessageCount++;
             if (this.messageCountBadge) {
-              this.messageCountBadge.textContent = `${this.totalMessageCount} messages`;
+              this.messageCountBadge.textContent = `${this.totalMessageCount} ${this.totalMessageCount === 1 ? 'message' : 'messages'} (today)`;
             }
           }
+          // Periodic cleanup in background
+          this._cleanupExpiredMessages();
         }
       } catch (err) {
         console.warn('Failed to insert to Supabase, saving locally:', err);
@@ -842,7 +885,8 @@ class CommunityManager {
 
   _saveDemoMessages() {
     try {
-      localStorage.setItem('juswa_demo_chat', JSON.stringify(this.messages.slice(-50)));
+      const active = this.messages.filter(m => (Date.now() - new Date(m.created_at).getTime()) < TWENTY_FOUR_HOURS_MS);
+      localStorage.setItem('juswa_demo_chat', JSON.stringify(active.slice(-50)));
     } catch {
       // ignore
     }
