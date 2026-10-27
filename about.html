@@ -412,53 +412,62 @@
   <!-- Community Live Chat & 2D Lounge Modal -->
   <div id="community-modal" class="community-modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="tab-btn-chat">
     <div class="community-modal-card">
-      <!-- Header with Tabs and Close Button -->
+      <!-- Header with Room Title, Tabs and Close Button -->
       <div class="community-modal-header">
-        <div class="community-tabs-group" role="tablist">
-          <button id="tab-btn-chat" class="community-tab-btn active" role="tab" aria-selected="true">
-            💬 Community Chat
-          </button>
-          <button id="tab-btn-lounge" class="community-tab-btn" role="tab" aria-selected="false">
-            🕹️ 2D Sketch Lounge
-          </button>
+        <div class="community-header-left">
+          <div class="community-room-title">
+            <span class="presence-live-dot" aria-hidden="true"></span>
+            <span>COMMUNITY SPACE</span>
+          </div>
+          <div class="community-tabs-group" role="tablist">
+            <button id="tab-btn-chat" class="community-tab-btn active" role="tab" aria-selected="true">
+              💬 Chat
+            </button>
+            <button id="tab-btn-lounge" class="community-tab-btn" role="tab" aria-selected="false">
+              🕹️ 2D Room
+            </button>
+          </div>
         </div>
         <button id="community-modal-close" class="community-close-btn" aria-label="Close modal">✕</button>
       </div>
 
-      <!-- Tab 1: Community Chat -->
-      <div id="community-view-chat" class="community-view-chat">
-        <div class="community-stats-bar">
-          <span id="community-message-count">Loading messages...</span>
-          <span>Live Guestbook</span>
-        </div>
-
-        <div id="community-messages-list" class="community-messages-list" role="log" aria-live="polite">
-          <!-- Rendered dynamically -->
-        </div>
-
-        <div class="community-chat-footer">
-          <div class="chat-user-indicator">
-            <div class="chat-user-badge-group">
-              <button id="community-avatar-picker-btn" class="avatar-picker-mini-btn" title="Click to cycle avatar" aria-label="Cycle avatar">
-                <!-- Mini SVG Avatar -->
-              </button>
-              <span>chatting as</span>
-              <button id="community-nickname-btn" class="nickname-pill-btn" title="Click to change your nickname">Guest</button>
-            </div>
-            <span id="community-user-badge" class="chat-location-tag">Earth 🌍 💻</span>
+      <!-- Split View Body Container -->
+      <div class="community-modal-body">
+        <!-- Column 1: Community Chat -->
+        <div id="community-view-chat" class="community-view-chat">
+          <div class="community-stats-bar">
+            <span id="community-message-count">Loading messages...</span>
+            <span>Live Guestbook</span>
           </div>
 
-          <form id="community-chat-form" class="community-chat-form">
-            <input type="text" id="community-chat-input" class="community-chat-input" placeholder="say something..." maxlength="280" autocomplete="off" required>
-            <button type="submit" class="community-send-btn" aria-label="Send message">Send ↵</button>
-          </form>
-        </div>
-      </div>
+          <div id="community-messages-list" class="community-messages-list" role="log" aria-live="polite">
+            <!-- Rendered dynamically -->
+          </div>
 
-      <!-- Tab 2: 2D Walkable Lounge -->
-      <div id="community-view-lounge" class="community-view-lounge" style="display: none;">
-        <div class="sketch-lounge-canvas-wrap">
-          <canvas id="sketch-lounge-canvas" class="sketch-lounge-canvas" width="600" height="400"></canvas>
+          <div class="community-chat-footer">
+            <div class="chat-user-indicator">
+              <div class="chat-user-badge-group">
+                <button id="community-avatar-picker-btn" class="avatar-picker-mini-btn" title="Click to cycle avatar" aria-label="Cycle avatar">
+                  <!-- Mini SVG Avatar -->
+                </button>
+                <span>chatting as</span>
+                <button id="community-nickname-btn" class="nickname-pill-btn" title="Click to change your nickname">Guest</button>
+              </div>
+              <span id="community-user-badge" class="chat-location-tag">Earth 🌍 💻</span>
+            </div>
+
+            <form id="community-chat-form" class="community-chat-form">
+              <input type="text" id="community-chat-input" class="community-chat-input" placeholder="say something..." maxlength="280" autocomplete="off" required>
+              <button type="submit" class="community-send-btn" aria-label="Send message">Send ↵</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Column 2: 2D Walkable Lounge -->
+        <div id="community-view-lounge" class="community-view-lounge">
+          <div class="sketch-lounge-canvas-wrap">
+            <canvas id="sketch-lounge-canvas" class="sketch-lounge-canvas" width="640" height="420"></canvas>
+          </div>
         </div>
       </div>
     </div>

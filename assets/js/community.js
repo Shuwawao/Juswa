@@ -4,13 +4,15 @@
  * client-side geolocation/device tagging, and the 2D walkable grid lounge.
  */
 
-import { getSupabase, isSupabaseConfigured, SUPABASE_CONFIG } from './supabase.js';
+import { getSupabase, isSupabaseConfigured } from './supabase.js';
 import { SketchLounge } from './lounge.js';
 
-// Random Sketch Nicknames Pool
+// Random Sketch Nicknames Pool for New Viewers
 const RANDOM_NICKNAMES = [
   'Rwow', 'Ceetlog', 'Loe Po', 'KapeFan', 'DoodleCat', 
-  'SketchGuy', 'PixelBoi', 'Chillin', 'PasigDev', 'NightOwl'
+  'SketchGuy', 'PixelBoi', 'Chillin', 'PasigDev', 'NightOwl',
+  'CodeNinja', 'BobaLover', 'CoffeeBean', 'DoodleArt', 'VibeCheck',
+  'EchoWave', 'NeonDoodler', 'PaperPlane', 'BitCrush', 'CozyCat'
 ];
 
 // Clean Inline SVG Doodle Avatars
@@ -70,21 +72,40 @@ export const AVATAR_PRESETS = [
 class CommunityManager {
   constructor() {
     this.playerId = 'guest-' + Math.random().toString(36).substring(2, 9);
-    this.nickname = localStorage.getItem('juswa_nickname') || this._generateRandomNickname();
-    this.avatarId = localStorage.getItem('juswa_avatar') || 'sketch-1';
+    this.onlineAt = new Date().toISOString();
+
+    // 1. Random Nickname for New Viewers (Persisted or Generated)
+    const storedNickname = localStorage.getItem('juswa_nickname');
+    if (!storedNickname || storedNickname === 'Guest' || storedNickname.trim() === '' || storedNickname.startsWith('Visitor')) {
+      this.nickname = this._generateRandomNickname();
+    } else {
+      this.nickname = storedNickname.trim().substring(0, 20);
+    }
+
+    // 2. Random Avatar Preset for New Viewers
+    const storedAvatar = localStorage.getItem('juswa_avatar');
+    if (!storedAvatar || !AVATAR_PRESETS.some(a => a.id === storedAvatar)) {
+      const randomPreset = AVATAR_PRESETS[Math.floor(Math.random() * AVATAR_PRESETS.length)].id;
+      this.avatarId = randomPreset;
+      localStorage.setItem('juswa_avatar', randomPreset);
+    } else {
+      this.avatarId = storedAvatar;
+    }
+
     this.locationTag = sessionStorage.getItem('juswa_location') || 'Earth 🌍';
     this.deviceIcon = /Mobi|Android|iPhone/i.test(navigator.userAgent) ? '📱' : '💻';
 
     this.supabase = null;
-    this.presenceChannel = null;
-    this.broadcastChannel = null;
+    this.roomChannel = null;
     this.messages = [];
     this.presenceCount = 1;
     this.presenceAvatars = [];
+    this.totalMessageCount = null;
 
     this.lounge = null;
-    this.activeTab = 'chat'; // 'chat' or 'lounge'
+    this.activeTab = 'chat';
     this.lastMessageSentTime = 0;
+    this.lastTrackTime = 0;
 
     this.isConfigured = isSupabaseConfigured();
   }
@@ -97,9 +118,11 @@ class CommunityManager {
   }
 
   _generateRandomNickname() {
-    const name = RANDOM_NICKNAMES[Math.floor(Math.random() * RANDOM_NICKNAMES.length)];
-    localStorage.setItem('juswa_nickname', name);
-    return name;
+    const baseName = RANDOM_NICKNAMES[Math.floor(Math.random() * RANDOM_NICKNAMES.length)];
+    const num = Math.floor(10 + Math.random() * 89);
+    const fullName = `${baseName} ${num}`;
+    localStorage.setItem('juswa_nickname', fullName);
+    return fullName;
   }
 
   async _fetchLocation() {
@@ -179,7 +202,6 @@ class CommunityManager {
       };
     }
 
-    // Click outside modal card to close
     if (this.modal) {
       this.modal.onclick = (e) => {
         if (e.target === this.modal) {
@@ -211,7 +233,6 @@ class CommunityManager {
       this.avatarPickerBtn.onclick = () => this.cycleAvatar();
     }
 
-    // Close modal on escape
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.modal?.classList.contains('is-open')) {
         this.closeModal();
@@ -237,7 +258,7 @@ class CommunityManager {
 
   promptChangeNickname() {
     const current = this.nickname;
-    const newName = window.prompt("What should we call you in the sketchbook room?", current);
+    const newName = window.prompt("Choose your sketchbook nickname:", current);
     if (newName && newName.trim().length > 0) {
       const cleanName = newName.trim().substring(0, 20);
       this.nickname = cleanName;
@@ -247,8 +268,8 @@ class CommunityManager {
       if (this.lounge) {
         this.lounge.updateProfile(this.nickname, this.avatarId);
       }
-      if (this.presenceChannel) {
-        this.presenceChannel.track(this._getPresenceState());
+      if (this.roomChannel) {
+        this.roomChannel.track(this._getPresenceState());
       }
       if (window.JuswaSound) window.JuswaSound.playClick();
     }
@@ -264,8 +285,8 @@ class CommunityManager {
     if (this.lounge) {
       this.lounge.updateProfile(this.nickname, this.avatarId);
     }
-    if (this.presenceChannel) {
-      this.presenceChannel.track(this._getPresenceState());
+    if (this.roomChannel) {
+      this.roomChannel.track(this._getPresenceState());
     }
     if (window.JuswaSound) window.JuswaSound.playClick();
   }
@@ -275,8 +296,40 @@ class CommunityManager {
     this.modal.style.display = 'flex';
     this.modal.classList.add('is-open');
     this.modal.setAttribute('aria-hidden', 'false');
-    this.switchTab(tab);
+
+    const isDesktop = window.innerWidth >= 960;
+    if (isDesktop) {
+      if (this.viewChat) this.viewChat.style.display = 'flex';
+      if (this.viewLounge) this.viewLounge.style.display = 'flex';
+      this._ensureLoungeInitialized();
+      setTimeout(() => {
+        if (this.lounge) this.lounge.resize();
+        this._scrollToBottom();
+      }, 60);
+    } else {
+      this.switchTab(tab);
+    }
     if (window.JuswaSound) window.JuswaSound.playClick();
+  }
+
+  _ensureLoungeInitialized() {
+    if (!this.lounge && this.loungeCanvas) {
+      this.lounge = new SketchLounge(this.loungeCanvas, {
+        playerId: this.playerId,
+        nickname: this.nickname,
+        avatarId: this.avatarId,
+        isDemoMode: !this.isConfigured,
+        onMove: (pos) => this._onPlayerMove(pos),
+        onWave: (wave) => this._onPlayerWave(wave)
+      });
+
+      // Immediately populate any remote players already in presence state
+      this._syncLoungeFromPresence();
+    } else if (this.lounge) {
+      this.lounge.resume();
+      this.lounge.resize();
+      this._syncLoungeFromPresence();
+    }
   }
 
   closeModal() {
@@ -284,28 +337,37 @@ class CommunityManager {
     this.modal.style.display = 'none';
     this.modal.classList.remove('is-open');
     this.modal.setAttribute('aria-hidden', 'true');
+    if (this.lounge) {
+      this.lounge.pause();
+    }
     if (window.JuswaSound) window.JuswaSound.playClick();
   }
 
   switchTab(tab) {
     this.activeTab = tab;
+    const isDesktop = window.innerWidth >= 960;
+    if (isDesktop) {
+      if (this.viewChat) this.viewChat.style.display = 'flex';
+      if (this.viewLounge) this.viewLounge.style.display = 'flex';
+      this._ensureLoungeInitialized();
+      setTimeout(() => {
+        if (this.lounge) this.lounge.resize();
+        this._scrollToBottom();
+      }, 60);
+      return;
+    }
+
     if (this.tabChatBtn) this.tabChatBtn.classList.toggle('active', tab === 'chat');
     if (this.tabLoungeBtn) this.tabLoungeBtn.classList.toggle('active', tab === 'lounge');
 
     if (this.viewChat) this.viewChat.style.display = tab === 'chat' ? 'flex' : 'none';
-    if (this.viewLounge) this.viewLounge.style.display = tab === 'lounge' ? 'block' : 'none';
+    if (this.viewLounge) this.viewLounge.style.display = tab === 'lounge' ? 'flex' : 'none';
 
     if (tab === 'lounge') {
-      if (!this.lounge && this.loungeCanvas) {
-        this.lounge = new SketchLounge(this.loungeCanvas, {
-          playerId: this.playerId,
-          nickname: this.nickname,
-          avatarId: this.avatarId,
-          isDemoMode: !this.isConfigured,
-          onMove: (pos) => this._onPlayerMove(pos),
-          onWave: (wave) => this._onPlayerWave(wave)
-        });
-      }
+      this._ensureLoungeInitialized();
+      setTimeout(() => {
+        if (this.lounge) this.lounge.resize();
+      }, 60);
     } else if (tab === 'chat') {
       this._scrollToBottom();
       if (this.chatInput) this.chatInput.focus();
@@ -313,14 +375,48 @@ class CommunityManager {
   }
 
   _getPresenceState() {
+    const pos = this.lounge ? {
+      x: Math.round(this.lounge.localPlayer.x),
+      y: Math.round(this.lounge.localPlayer.y),
+      facing: this.lounge.localPlayer.facing
+    } : { x: 320, y: 210, facing: 'down' };
+
     return {
       id: this.playerId,
       nickname: this.nickname,
       avatarId: this.avatarId,
       location: this.locationTag,
       device: this.deviceIcon,
-      onlineAt: new Date().toISOString()
+      x: pos.x,
+      y: pos.y,
+      facing: pos.facing,
+      onlineAt: this.onlineAt
     };
+  }
+
+  _syncLoungeFromPresence() {
+    if (!this.lounge || !this.roomChannel) return;
+    try {
+      const state = this.roomChannel.presenceState();
+      const activeRemoteIds = new Set();
+      for (const key in state) {
+        for (const u of state[key] || []) {
+          if (u && u.id && u.id !== this.playerId) {
+            activeRemoteIds.add(u.id);
+            this.lounge.syncRemotePlayer(u.id, u);
+          }
+        }
+      }
+
+      // Remove any character who has left the room
+      for (const id of this.lounge.remotePlayers.keys()) {
+        if (!activeRemoteIds.has(id)) {
+          this.lounge.removeRemotePlayer(id);
+        }
+      }
+    } catch {
+      // presence state not ready
+    }
   }
 
   // --- Backend & Realtime Setup ---
@@ -347,19 +443,62 @@ class CommunityManager {
       const syncPresence = () => {
         const state = this.roomChannel.presenceState();
         const users = [];
+        const activeRemoteIds = new Set();
+
         for (const key in state) {
-          users.push(...state[key]);
+          const list = state[key];
+          if (Array.isArray(list)) {
+            for (const u of list) {
+              if (u && u.id) {
+                users.push(u);
+                if (u.id !== this.playerId) {
+                  activeRemoteIds.add(u.id);
+                  if (this.lounge) {
+                    this.lounge.syncRemotePlayer(u.id, u);
+                  }
+                }
+              }
+            }
+          }
         }
+
+        // Consistent avatar disappearance: Remove remote players no longer in presence state
+        if (this.lounge) {
+          for (const id of this.lounge.remotePlayers.keys()) {
+            if (!activeRemoteIds.has(id)) {
+              this.lounge.removeRemotePlayer(id);
+            }
+          }
+        }
+
         this.presenceCount = Math.max(1, users.length);
         this.presenceAvatars = users.map(u => u.avatarId || 'sketch-1');
-        console.log('[Juswa Community] Realtime presence updated. Count:', this.presenceCount);
         this._renderPresence();
       };
 
       this.roomChannel
         .on('presence', { event: 'sync' }, syncPresence)
-        .on('presence', { event: 'join' }, syncPresence)
-        .on('presence', { event: 'leave' }, syncPresence)
+        .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+          syncPresence();
+          if (this.lounge && newPresences) {
+            for (const joined of newPresences) {
+              if (joined && joined.id && joined.id !== this.playerId) {
+                this.lounge.syncRemotePlayer(joined.id, joined);
+                this.lounge.showSpeech(joined.id, '👋 joined');
+              }
+            }
+          }
+        })
+        .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+          if (this.lounge && leftPresences) {
+            for (const left of leftPresences) {
+              if (left && left.id) {
+                this.lounge.removeRemotePlayer(left.id);
+              }
+            }
+          }
+          syncPresence();
+        })
         .on('broadcast', { event: 'player_move' }, ({ payload }) => {
           if (this.lounge && payload && payload.id !== this.playerId) {
             this.lounge.setRemotePlayerPosition(payload.id, payload);
@@ -382,18 +521,33 @@ class CommunityManager {
           console.log('[Juswa Community] WebSocket connection status:', status);
           if (status === 'SUBSCRIBED') {
             await this.roomChannel.track(this._getPresenceState());
-            console.log('[Juswa Community] Tracked presence as:', this.nickname, this.playerId);
+            console.log('[Juswa Community] Successfully joined presence room as:', this.nickname, this.playerId);
           }
         });
 
-      // Cleanup on page unload
-      window.addEventListener('beforeunload', () => {
+      // Cleanup when leaving page
+      const cleanLeave = () => {
         if (this.roomChannel) {
-          this.roomChannel.untrack();
+          try {
+            this.roomChannel.untrack();
+          } catch {
+            // ignore
+          }
         }
-      });
+      };
+      window.addEventListener('beforeunload', cleanLeave);
+      window.addEventListener('pagehide', cleanLeave);
 
-      // Postgres Changes for Live Chat (Database level sync)
+      // Periodic presence position refresh (every 15s) so resting positions stay up-to-date
+      setInterval(() => {
+        const now = Date.now();
+        if (this.roomChannel && this.lounge && (now - this.lastTrackTime > 15000)) {
+          this.lastTrackTime = now;
+          this.roomChannel.track(this._getPresenceState());
+        }
+      }, 15000);
+
+      // Postgres Realtime Changes for Live Chat (Database level sync)
       this.supabase
         .channel('public:community_messages')
         .on(
@@ -402,9 +556,20 @@ class CommunityManager {
           (payload) => {
             const incoming = payload.new;
             if (incoming) {
-              const isDuplicate = this.messages.some(m => m.id === incoming.id || (m.nickname === incoming.nickname && m.message === incoming.message));
+              const norm = {
+                id: incoming.id,
+                nickname: incoming.username || incoming.nickname || 'Visitor',
+                username: incoming.username || incoming.nickname || 'Visitor',
+                location: incoming.location || 'Earth 🌍',
+                device: incoming.device || '',
+                message: incoming.message,
+                avatar_id: incoming.avatar_id || 'sketch-1',
+                created_at: incoming.created_at
+              };
+              const isDuplicate = this.messages.some(m => m.id === norm.id || (m.message === norm.message && (m.nickname === norm.nickname || m.username === norm.username) && Math.abs(new Date(m.created_at) - new Date(norm.created_at)) < 5000));
               if (!isDuplicate) {
-                this._appendMessage(incoming);
+                if (typeof this.totalMessageCount === 'number') this.totalMessageCount++;
+                this._appendMessage(norm);
               }
             }
           }
@@ -418,8 +583,8 @@ class CommunityManager {
   }
 
   _setupDemoPresence() {
-    this.presenceCount = 4;
-    this.presenceAvatars = ['sketch-1', 'sketch-2', 'sketch-3', 'sketch-4'];
+    this.presenceCount = 3;
+    this.presenceAvatars = ['sketch-1', 'sketch-2', 'sketch-3'];
     this._renderPresence();
   }
 
@@ -469,23 +634,38 @@ class CommunityManager {
   async _loadInitialMessages() {
     if (this.supabase) {
       try {
+        const { count, error: countErr } = await this.supabase
+          .from('community_messages')
+          .select('*', { count: 'exact', head: true });
+        if (!countErr && count !== null && count !== undefined) {
+          this.totalMessageCount = count;
+        }
+
         const { data, error } = await this.supabase
           .from('community_messages')
           .select('*')
           .order('created_at', { ascending: true })
-          .limit(50);
+          .limit(100);
 
         if (!error && data && data.length > 0) {
-          this.messages = data;
+          this.messages = data.map(m => ({
+            id: m.id,
+            nickname: m.username || m.nickname || 'Visitor',
+            username: m.username || m.nickname || 'Visitor',
+            location: m.location || 'Earth 🌍',
+            device: m.device || '',
+            message: m.message,
+            avatar_id: m.avatar_id || 'sketch-1',
+            created_at: m.created_at
+          }));
           this._renderAllMessages();
           return;
         }
       } catch (err) {
-        console.warn('Could not fetch from Supabase, loading local messages:', err);
+        console.warn('Could not fetch from Supabase, loading fallback messages:', err);
       }
     }
 
-    // Default Friendly Initial Messages
     const saved = localStorage.getItem('juswa_demo_chat');
     if (saved) {
       try {
@@ -538,7 +718,8 @@ class CommunityManager {
       this._appendMessageDOM(msg);
     }
     if (this.messageCountBadge) {
-      this.messageCountBadge.textContent = `${this.messages.length} messages`;
+      const count = (typeof this.totalMessageCount === 'number') ? this.totalMessageCount : this.messages.length;
+      this.messageCountBadge.textContent = `${count} messages`;
     }
     this._scrollToBottom();
   }
@@ -547,13 +728,23 @@ class CommunityManager {
     this.messages.push(msg);
     this._appendMessageDOM(msg);
     if (this.messageCountBadge) {
-      this.messageCountBadge.textContent = `${this.messages.length} messages`;
+      const count = (typeof this.totalMessageCount === 'number') ? this.totalMessageCount : this.messages.length;
+      this.messageCountBadge.textContent = `${count} messages`;
     }
     this._scrollToBottom();
 
-    // If lounge exists, pop a speech bubble over player
+    // If lounge exists, pop a speech bubble over corresponding character
     if (this.lounge) {
-      this.lounge.showSpeech(msg.nickname === this.nickname ? this.playerId : msg.nickname, msg.message);
+      let targetId = this.playerId;
+      if (msg.nickname !== this.nickname) {
+        for (const [rId, rPlayer] of this.lounge.remotePlayers.entries()) {
+          if (rPlayer.nickname === msg.nickname) {
+            targetId = rId;
+            break;
+          }
+        }
+      }
+      this.lounge.showSpeech(targetId, msg.message);
     }
   }
 
@@ -622,15 +813,21 @@ class CommunityManager {
         const { error } = await this.supabase
           .from('community_messages')
           .insert([{
-            nickname: newMsg.nickname,
-            location: newMsg.location,
-            device: newMsg.device,
-            message: newMsg.message,
-            avatar_id: newMsg.avatar_id
+            username: newMsg.nickname.substring(0, 24),
+            location: `${newMsg.location || 'Earth'} ${newMsg.device || '💻'}`.trim(),
+            message: newMsg.message.substring(0, 280),
+            avatar_id: newMsg.avatar_id || 'sketch-1'
           }]);
         if (error) {
           console.warn('Supabase DB save error:', error);
           this._saveDemoMessages();
+        } else {
+          if (typeof this.totalMessageCount === 'number') {
+            this.totalMessageCount++;
+            if (this.messageCountBadge) {
+              this.messageCountBadge.textContent = `${this.totalMessageCount} messages`;
+            }
+          }
         }
       } catch (err) {
         console.warn('Failed to insert to Supabase, saving locally:', err);
