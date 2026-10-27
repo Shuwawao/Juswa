@@ -11,6 +11,7 @@ import { initMusicPlayer } from './player.js';
 import { initRoom, cleanupRoom } from './room.js';
 import { initProjects } from './projects.js';
 import { initAnimations, refreshAnimations } from './animations.js';
+import { initCommunity } from './community.js';
 
 let roleRotatorInterval = null;
 
@@ -267,6 +268,7 @@ export function navigateToPage(url, pushState = true) {
 
           // Re-bind interactive sounds and links
           bindPageInteractions();
+  initCommunity();
 
           // Refresh scroll reveals and parallax for new content
           refreshAnimations();
@@ -297,6 +299,7 @@ window.addEventListener('popstate', (e) => {
 function bootstrapApp() {
   bindNavMenuControls();
   bindPageInteractions();
+  initCommunity();
   initMusicPlayer();
   initAnimations();
 
